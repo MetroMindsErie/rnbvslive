@@ -60,15 +60,6 @@ export default function Home() {
 
         {/* Content Layer with ref for grabbing effect */}
         <div className="content-layer" ref={contentRef}>
-          {/* 3D Logo - Upper Left */}
-          {/* <div className="logo-container">
-            <img 
-              src="/images/3D-Logo-White.gif" 
-              alt="R&B Versus Live 3D Logo"
-              className="logo-3d"
-            />
-          </div>   */}
-                 
           {/* Main Content - Social Media Tags with cursor effect */}
           <div className="main-content">
             <div className="social-tags-container">
@@ -80,6 +71,8 @@ export default function Home() {
               />
             </div>
           </div>
+          
+          {/* Follow button removed from here since it's now in _app.js */}
         </div>
       </div>
     </>
