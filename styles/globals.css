@@ -966,3 +966,76 @@ a:focus {
   }
 }
 
+/* Error fallback styling */
+.error-fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  padding: 2rem;
+  text-align: center;
+  background-color: #000;
+  color: white;
+}
+
+.error-fallback h1 {
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
+
+.error-fallback button {
+  margin-top: 1.5rem;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(45deg, #001A57, #0039AC);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+/* Mobile device optimizations */
+.is-mobile-device .magnifier,
+.is-mobile-device .custom-cursor,
+.is-mobile-device .cursor-inner,
+.is-mobile-device .ripple-canvas {
+  display: none !important;
+}
+
+.is-mobile-device .homepage-container {
+  cursor: auto !important;
+}
+
+.is-mobile-device .content-layer,
+.is-mobile-device .main-content {
+  transform: none !important;
+  transition: none !important;
+}
+
+/* Optimize image loading and rendering on mobile */
+@media (max-width: 768px) {
+  img {
+    transition: none !important;
+  }
+  
+  .social-tags-image {
+    width: 100% !important;
+    height: auto !important;
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
+  }
+  
+  /* Reduce animations to improve performance */
+  .particle {
+    display: none;
+  }
+  
+  /* Show only first 5 particles on mid-range devices */
+  @media (min-width: 480px) {
+    .particle:nth-child(-n+5) {
+      display: block;
+    }
+  }
+}
+

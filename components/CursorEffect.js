@@ -1,9 +1,10 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 const SIZE = 120       // spotlight diameter
 const TRAIL_SPEED = 0.15
 
 export default function CursorEffect() {
+  const [cursorVisible, setCursorVisible] = useState(false);
   const spotlightRef = useRef(null)
   const ghostRef = useRef(null)
   const requestRef = useRef(null)
@@ -11,26 +12,39 @@ export default function CursorEffect() {
   const lastUpdateRef = useRef(0)
   const lastDimStateRef = useRef(false)
   const lastHoveredRef = useRef(null)
+  const isMountedRef = useRef(false);
 
   useEffect(() => {
-    // Check if device is mobile/touch at initialization
+    // Set mounted flag
+    isMountedRef.current = true;
+    
+    // Safety check for window to prevent SSR errors
+    if (typeof window === 'undefined') return;
+    
+    // Detect mobile/touch devices more reliably
     const isTouchDevice = () => {
-      return (('ontouchstart' in window) ||
+      return (
+        ('ontouchstart' in window) ||
         (navigator.maxTouchPoints > 0) ||
-        (navigator.msMaxTouchPoints > 0));
+        (navigator.msMaxTouchPoints > 0) ||
+        window.matchMedia('(pointer: coarse)').matches
+      );
     };
 
-    // Completely disable cursor effect on touch devices
+    // Don't initialize cursor effects on touch devices
     if (isTouchDevice()) {
-      setCursorVisible(false);
-      // Remove any existing cursor elements that might be stuck
-      const cursorElements = document.querySelectorAll('.custom-cursor, .magnifier, .clone-layer');
-      cursorElements.forEach(el => {
-        if (el && el.parentNode) {
-          el.parentNode.removeChild(el);
-        }
-      });
-      return; // Exit early, don't set up mouse tracking on touch devices
+      // Clean up any existing cursor elements to prevent artifacts
+      try {
+        const elements = document.querySelectorAll('.custom-cursor, .magnifier, .clone-layer');
+        elements.forEach(el => {
+          if (el && el.parentNode) {
+            el.parentNode.removeChild(el);
+          }
+        });
+      } catch (err) {
+        console.log("Cleanup error:", err);
+      }
+      return;
     }
 
     const spotlight = spotlightRef.current
@@ -190,6 +204,14 @@ export default function CursorEffect() {
       overlay.classList.remove('active')
     }
   }, [])
+
+  // Skip rendering on mobile devices
+  if (typeof window !== 'undefined' && 
+      (('ontouchstart' in window) || 
+       (navigator.maxTouchPoints > 0) || 
+       window.matchMedia('(pointer: coarse)').matches)) {
+    return null;
+  }
 
   return (
     <>
