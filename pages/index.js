@@ -42,7 +42,7 @@ export default function Home({ isMobile }) {
           ref={backgroundRef}
           className="parallax-background"
           style={{
-            backgroundImage: "url('/images/parallax-bg.jpg')",
+            // backgroundImage: "url('/images/parallax-bg.jpg')",
             backgroundPosition: "center center",
             backgroundSize: "cover",
             position: "fixed",
