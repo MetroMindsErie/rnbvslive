@@ -105,101 +105,196 @@
     align-items: center;
     transition: all 0.3s ease;
     padding-left: 10px; /* Add some padding on the left */
-    background: transparent; /* Ensure no background */
-    border: none; /* Remove any border */
-    outline: none; /* Remove any outline */
+    background: transparent !important; /* Force no background */
+    border: none !important; /* Force no border */
+    outline: none !important; /* Force no outline */
+    box-shadow: none !important; /* Force no box shadow */
   }
 
-  .navbar-logo-link:hover {
+  .navbar-logo-link:hover,
+  .navbar-logo-link:focus,
+  .navbar-logo-link:active {
     transform: scale(1.05);
-    background: transparent; /* Ensure no background on hover */
-    box-shadow: none; /* Remove any box shadow */
-    border: none; /* Ensure no border on hover */
+    background: transparent !important; /* Force no background on all states */
+    box-shadow: none !important; /* Force no box shadow on all states */
+    border: none !important; /* Force no border on all states */
+    outline: none !important; /* Force no outline on all states */
   }
 
   .navbar-logo {
-    height: 100px; /* Keep the large size */
+    height: 140px; /* Increased from 100px to 140px */
     width: auto;
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
   }
 
-  .nav-container {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    grid-template-rows: auto auto;
-    grid-template-areas: 
-      "bottom-left top-right"
-      "bottom-left .";
-    gap: 10px;
+  /* Mobile spinning logo */
+  .mobile-spinning-logo {
+    position: fixed;
+    top: 50%;
+    left: 20px;
+    transform: translateY(-50%);
+    z-index: 999;
+    display: none;
+    padding: 10px; /* Add padding for better touch target */
+    border-radius: 50%;
+    transition: all 0.3s ease;
+  }
+
+  .mobile-spinning-logo:active {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-50%) scale(0.95);
+  }
+
+  .spinning-logo-image {
+    height: 50px; /* Reduced from 60px to make it less intrusive */
+    width: auto;
+    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.5));
+    transition: all 0.3s ease;
+    animation: gentleSpin 8s linear infinite;
+    display: block;
+  }
+
+  .spinning-logo-image:hover {
+    transform: scale(1.1);
+    animation-duration: 2s;
+  }
+
+  @keyframes gentleSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  /* Desktop large logo */
+  .desktop-large-logo {
+    position: fixed;
+    top: 30px;
+    left: 30px;
+    z-index: 999;
+    display: block;
+  }
+
+  .large-logo-image {
+    height: 140px;
+    width: auto;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4));
+    transition: all 0.3s ease;
+    animation: floatLogo 3s ease-in-out infinite;
+  }
+
+  .large-logo-image:hover {
+    transform: scale(1.05) translateY(-5px);
+  }
+
+  /* Simplified navbar container without grid complexity */
+  .nav-container-simplified {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 0;
-    min-height: 150px; /* Provide enough height for the 2x2 grid */
+    padding: 20px 30px;
+    position: relative;
   }
 
-  .top-right-content {
-    grid-area: top-right;
+  .nav-content {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .bottom-left-content {
-    grid-area: bottom-left;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    grid-row: span 2; /* Make it span both rows */
-  }
-
-  /* Nav Links */
-  .nav-links {
-    display: flex;
-    gap: 20px;
-    align-items: center;
-    flex-grow: 1;
     justify-content: center;
+    align-items: center;
+    width: 100%;
+    position: relative;
   }
 
-  /* Desktop navigation */
-  .desktop-nav {
+  /* Nav actions positioned to the right */
+  .nav-actions {
+    position: absolute;
+    right: 0;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .cart-icon-button {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-  }
-
-  .nav-link {
-    position: relative;
     color: rgba(255, 255, 255, 0.9);
     text-decoration: none;
-    font-family: 'Montserrat', 'Red Hat Display', sans-serif;
-    font-weight: 500;
-    font-size: 0.80rem; /* smaller font for nav links */
-    padding: 0.75rem 1rem;
-    border-radius: 8px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    letter-spacing: 1.5px;
-    white-space: nowrap;
-    text-transform: uppercase;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7); /* Stronger shadow for better contrast */
+    padding: 0.5rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    background: transparent;
+    border: none;
+    font-family: 'Red Hat Display', 'Montserrat', sans-serif;
+    position: relative;
   }
 
-  .nav-link::after {
-    display: none;
-  }
-
-  .nav-link:hover {
-    color: #fff;
-    background: transparent; /* remove glow/background on hover */
-    transform: translateY(0); /* remove lift */
-    /* Duke Blue underline */
-    box-shadow: inset 0 -2px 0 #001A57;
-  }
-
-  .nav-link.active {
+  .cart-icon-button:hover {
     color: white;
-    background: rgba(0, 26, 87, 0.12);
-    font-weight: 500;
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .shopping-bag-icon {
+    width: 24px;
+    height: 24px;
+    opacity: 0.9;
+  }
+
+  .cart-count-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: rgba(0, 26, 87, 0.9);
+    color: white;
+    border-radius: 50%;
+    padding: 0.125rem 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    min-width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    border: 2px solid white;
+  }
+
+  /* Mobile responsive adjustments */
+  @media (max-width: 768px) {
+    .mobile-spinning-logo {
+      display: block;
+    }
+    
+    .desktop-large-logo {
+      display: none;
+    }
+
+    .nav-content {
+      justify-content: space-between;
+    }
+
+    .nav-links {
+      display: none;
+    }
+
+    .nav-actions {
+      position: static;
+    }
+
+    /* Ensure navbar doesn't interfere with spinning logo */
+    .nav-container-simplified {
+      padding: 20px 30px 20px 90px; /* Add left padding to avoid logo overlap */
+    }
+  }
+
+  @media (min-width: 769px) {
+    .mobile-spinning-logo {
+      display: none;
+    }
+    
+    .desktop-large-logo {
+      display: block;
+    }
+
+    .menu-button {
+      display: none;
+    }
   }
 
   /* Cart link styling with updated font */
@@ -421,33 +516,341 @@
     justify-content: center;
   }
 
-  /* Responsive design for the new grid layout */
-  @media (max-width: 900px) {
-    .nav-container {
-      grid-template-columns: 1fr;
-      grid-template-rows: auto;
-      grid-template-areas: 
-        "top-right";
-      min-height: auto;
-    }
-    
-    .bottom-left-content {
-      display: none; /* Hide the large logo on mobile */
-    }
-    
-    .top-right-content {
-      justify-content: space-between;
-      width: 100%;
-    }
-    
-    .nav-links {
-      display: none; /* Hide nav links on mobile */
-    }
-    
-    /* Disabled injected/logo pseudo-element to avoid duplicate logos */
-    .top-right-content:before {
-      content: none; /* disabled to avoid duplicate 3D logo */
+  /* Desktop navigation */
+  .desktop-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .nav-link {
+    position: relative;
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    font-family: 'Montserrat', 'Red Hat Display', sans-serif;
+    font-weight: 500;
+    font-size: 0.80rem; /* smaller font for nav links */
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    letter-spacing: 1.5px;
+    white-space: nowrap;
+    text-transform: uppercase;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7); /* Stronger shadow for better contrast */
+  }
+
+  .nav-link::after {
+    display: none;
+  }
+
+  .nav-link:hover {
+    color: #fff;
+    background: transparent; /* remove glow/background on hover */
+    transform: translateY(0); /* remove lift */
+    /* Duke Blue underline */
+    box-shadow: inset 0 -2px 0 #001A57;
+  }
+
+  .nav-link.active {
+    color: white;
+    background: rgba(0, 26, 87, 0.12);
+    font-weight: 500;
+  }
+
+  /* Mobile menu overlay */
+  .mobile-menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.75); /* Semi-transparent background */
+    backdrop-filter: blur(10px); /* Blur effect for a modern look */
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 1050;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+  }
+
+  .mobile-menu-overlay.open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .mobile-menu-container {
+    width: 100%;
+    max-width: 100%;
+    max-height: 100vh;
+    overflow-y: auto;
+    padding: 3rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+  }
+
+  /* 3D Logo in mobile menu */
+  .mobile-menu-logo {
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .mobile-3d-logo {
+    height: 120px;
+    width: auto;
+    margin: 0 auto;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5));
+    animation: floatLogo 3s ease-in-out infinite;
+  }
+
+  @keyframes floatLogo {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  /* Mobile navigation links */
+  .mobile-nav-links {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+    flex-grow: 1;
+  }
+
+  .mobile-nav-link {
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    font-family: 'Montserrat', 'Red Hat Display', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 500;
+    padding: 0.875rem 0;
+    text-align: center;
+    transition: all 0.3s ease;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mobile-nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: #001A57;
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+  }
+
+  .mobile-nav-link:hover {
+    color: #ffffff;
+    transform: translateY(-2px);
+  }
+
+  .mobile-nav-link:hover::after {
+    width: 80%;
+  }
+
+  .mobile-nav-link.active {
+    color: #ffffff;
+    font-weight: 600;
+  }
+
+  .mobile-nav-link.active::after {
+    width: 80%;
+    background: rgba(255, 255, 255, 0.8);
+  }
+
+  /* Mobile menu footer */
+  .mobile-nav-footer {
+    width: 100%;
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .mobile-cart-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    background: rgba(0, 26, 87, 0.8);
+    color: white;
+    text-decoration: none;
+    padding: 1rem 2rem;
+    border-radius: 30px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-family: 'Montserrat', 'Red Hat Display', sans-serif;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 200px;
+  }
+
+  .mobile-cart-link:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    background: rgba(0, 26, 87, 0.9);
+  }
+
+  .mobile-cart-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    background: white;
+    color: rgba(0, 26, 87, 1);
+    border-radius: 50%;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0 6px;
+  }
+
+  /* Social media links */
+  .mobile-social-links {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .social-icon {
+    color: rgba(255, 255, 255, 0.8);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .social-icon:hover {
+    color: white;
+    transform: translateY(-3px);
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  /* Menu button animation */
+  .menu-button {
+    position: relative;
+    z-index: 1060; /* Above the overlay */
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    color: white;
+    font-family: 'Montserrat', 'Red Hat Display', sans-serif;
+    font-weight: 500;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .hamburger {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .hamburger span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: white;
+    transition: all 0.3s ease;
+    transform-origin: left center;
+  }
+
+  .hamburger span.open:nth-child(1) {
+    transform: rotate(45deg) translate(1px, -2px);
+  }
+
+  .hamburger span.open:nth-child(2) {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+
+  .hamburger span.open:nth-child(3) {
+    transform: rotate(-45deg) translate(1px, 2px);
+  }
+
+  .menu-icon-text {
+    transition: all 0.3s ease;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .desktop-nav {
       display: none;
+    }
+    
+    .menu-button {
+      display: flex;
+    }
+    
+    .mobile-menu-overlay {
+      display: flex;
+    }
+  }
+
+  /* Make menu button more touch-friendly on mobile */
+  @media (max-width: 480px) {
+    .menu-button {
+      padding: 10px;
+    }
+    
+    .hamburger span {
+      width: 22px;
+    }
+    
+    .mobile-nav-link {
+      font-size: 1.1rem;
+      padding: 0.75rem 0;
+    }
+    
+    .mobile-3d-logo {
+      height: 90px;
+    }
+  }
+
+  /* Scroll effects */
+  @media (prefers-reduced-motion: no-preference) {
+    .rnbversus-sticky-nav {
+      animation: slideDown 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+  }
+
+  @keyframes slideDown {
+    from {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
     }
   }
 }
@@ -488,7 +891,7 @@
 
 @media (max-width: 900px) {
   .navbar-logo {
-    height: 50px; /* Increased from 32px to 50px for mobile */
+    height: 80px; /* Increased from 50px to 80px for mobile */
   }
   
   .nav-container {
@@ -761,23 +1164,19 @@
   }
 }
 
-/* Make menu button more touch-friendly on mobile */
 @media (max-width: 480px) {
-  .menu-button {
-    padding: 10px;
+  /* Make spinning logo more touch-friendly on very small screens */
+  .mobile-spinning-logo {
+    left: 15px;
+    padding: 12px;
   }
   
-  .hamburger span {
-    width: 22px;
+  .spinning-logo-image {
+    height: 45px;
   }
-  
-  .mobile-nav-link {
-    font-size: 1.1rem;
-    padding: 0.75rem 0;
-  }
-  
-  .mobile-3d-logo {
-    height: 90px;
+
+  .nav-container-simplified {
+    padding: 20px 20px 20px 80px;
   }
 }
 

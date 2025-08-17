@@ -75,9 +75,9 @@ export default function Navbar() {
 
   return (
     <nav className="rnb-navbar">
-      <div className="nav-container">
-        {/* Top Right Content (Nav Links and Actions) */}
-        <div className="top-right-content">
+      <div className="nav-container-simplified">
+        {/* Main Navigation Content */}
+        <div className="nav-content">
           {/* Main Navigation Links */}
           <div className="nav-links">
             {navItems.map((item) => (
@@ -115,17 +115,6 @@ export default function Navbar() {
               <span className="menu-icon-text">{isMenuOpen ? 'Close' : 'Menu'}</span>
             </button>
           </div>
-        </div>
-
-        {/* Bottom Left Logo */}
-        <div className="bottom-left-content">
-          <Link href="/" className="navbar-logo-link">
-            <img 
-              src="/images/3D-Logo-White.gif" 
-              alt="R&B Versus Live 3D Logo"
-              className="navbar-logo"
-            />
-          </Link>
         </div>
 
         {/* Enhanced Mobile Navigation with transparency and 3D logo */}
