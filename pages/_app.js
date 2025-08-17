@@ -83,7 +83,6 @@ export default function App({ Component, pageProps }) {
         </div>
 
         <FollowButton /> {/* Added to all pages */}
-        {!isHomePage && <Footer />}
       </ErrorBoundary>
     </Layout>
   )

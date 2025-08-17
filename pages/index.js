@@ -36,7 +36,7 @@ export default function Home({ isMobile }) {
       {/* Only render cursor effect for desktop */}
       {!isMobile && <CursorEffect />}
 
-      <div className="homepage-container">
+      <div className="homepage-container" style={{ height: '100vh', overflow: 'hidden' }}>
         {/* Background - completely static */}
         <div 
           ref={backgroundRef}
@@ -45,6 +45,7 @@ export default function Home({ isMobile }) {
             backgroundImage: "url('/images/parallax-bg.jpg')",
             backgroundPosition: "center center",
             backgroundSize: "cover",
+            position: "fixed",
             top: 0,
             left: 0,
             width: "100%",
@@ -73,7 +74,7 @@ export default function Home({ isMobile }) {
         </div>
 
         {/* Content Layer with ref for grabbing effect */}
-        <div className="content-layer" ref={contentRef}>
+        <div className="content-layer" ref={contentRef} style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           {/* Main Content - Social Media Tags with cursor effect */}
           <div className="main-content">
             <div className="social-tags-container">
