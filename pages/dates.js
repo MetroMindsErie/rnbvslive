@@ -270,12 +270,12 @@ export default function Dates() {
         </div>
 
         {/* Follow Button */}
-        <div className="follow-section">
+        {/* <div className="follow-section">
           <button className="follow-btn magneto-wrapper">
             <span className="follow-icon">👤</span>
             Follow
           </button>
-        </div>
+        </div> */}
 
         {/* Footer */}
         <div className="dates-footer">
