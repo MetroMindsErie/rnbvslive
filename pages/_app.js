@@ -2,6 +2,7 @@ import Layout from '../components/Layout'
 import '../styles/globals.css'
 import '../styles/home.css'
 import '../styles/dates.css'
+import '../styles/mashups.css' // Add the mashups CSS import here
 import CursorEffect from '../components/CursorEffect'
 import { useRouter } from 'next/router'
 import Navbar from '../components/Navbar'

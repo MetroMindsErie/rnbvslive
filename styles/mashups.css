@@ -1,0 +1,63 @@
+/* Mashups page specific styles */
+
+/* Main container for mashups page */
+.mashups-page {
+  position: relative;
+  min-height: 100vh;
+  background-color: #000;
+  color: #fff;
+  overflow-x: hidden;
+}
+
+/* Background image container styles */
+.mashups-background {
+  position: absolute;
+  inset: 0; /* shorthand for top: 0, right: 0, bottom: 0, left: 0 */
+  z-index: 0;
+  opacity: 0.3;
+}
+
+/* This ensures the background image is visible and covers the entire area */
+.mashups-background .bg-image {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Content container to ensure content is above background */
+.mashups-content {
+  position: relative;
+  z-index: 10;
+  padding-top: 120px; /* Space for navigation */
+}
+
+/* Casket viewer container */
+.casket-viewer-container {
+  padding: 1rem;
+}
+
+/* Make sure images are visible */
+.mashups-page img {
+  display: block;
+  max-width: 100%;
+}
+
+/* Debug helper */
+.debug-box {
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #00ff00;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 12px;
+  z-index: 9999;
+  max-width: 300px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}

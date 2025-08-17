@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 
-const SIZE = 120       // spotlight diameter
+// Reduce size from 120px to a much smaller value for the white ball cursor
+const SIZE = 12       // small white ball diameter
+const TRAIL_SIZE = 16 // slightly larger trail size
 const TRAIL_SPEED = 0.15
 
 export default function CursorEffect() {
@@ -215,23 +217,23 @@ export default function CursorEffect() {
 
   return (
     <>
-      {/* Ghost trail - absolute positioning */}
+      {/* Ghost trail - smaller, subtle trail */}
       <div
         ref={ghostRef}
         style={{
           position: 'fixed',
-          width: `${SIZE}px`,
-          height: `${SIZE}px`,
+          width: `${TRAIL_SIZE}px`,
+          height: `${TRAIL_SIZE}px`,
           borderRadius: '50%',
           pointerEvents: 'none',
           transition: 'opacity 220ms linear',
           opacity: 0,
           zIndex: 99997,
-          backgroundColor: 'rgba(255,255,255,0.05)',
+          backgroundColor: 'rgba(255,255,255,0.2)',
         }}
       />
 
-      {/* Spotlight - absolute positioning */}
+      {/* White ball cursor - smaller, solid white */}
       <div
         ref={spotlightRef}
         style={{
@@ -239,17 +241,17 @@ export default function CursorEffect() {
           width: `${SIZE}px`,
           height: `${SIZE}px`,
           borderRadius: '50%',
-          border: '2px solid rgba(255,255,255,0.8)',
-          backgroundColor: 'rgba(255,255,255,0.08)',
+          backgroundColor: 'white',
           pointerEvents: 'none',
           transition: 'opacity 220ms linear',
           opacity: 0,
           zIndex: 99998,
-          boxShadow: '0 0 20px 5px rgba(255,255,255,0.15)',
+          boxShadow: '0 0 5px rgba(255,255,255,0.5)',
+          mixBlendMode: 'difference', // This creates a nice contrast effect on different backgrounds
         }}
       />
 
-      {/* Dimming overlay with spotlight cutout */}
+      {/* Dimming overlay - adjust size to match new cursor */}
       <div 
         ref={overlayRef}
         style={{
@@ -261,7 +263,7 @@ export default function CursorEffect() {
           opacity: 0,
           '--spotlight-x': '50%',
           '--spotlight-y': '50%',
-          '--spotlight-size': `${SIZE * 2}px`,
+          '--spotlight-size': `${SIZE * 2}px`, // Adjust spotlight size
         }}
         className="dimming-overlay"
       />
