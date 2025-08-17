@@ -230,33 +230,38 @@ export default function Dates() {
               {events.map((event, index) => {
                 const dateFormatted = formatDate(event.date)
                 return (
-                  <div
+                  <Link 
+                    href={`/dates/${event.id}`} 
                     key={event.id}
-                    className="event-item magneto-wrapper"
-                    ref={(el) => {
-                      if (el && observerRef.current) {
-                        observerRef.current.observe(el)
-                      }
-                    }}
-                    style={{ animationDelay: `${index * 0.1}s` }}
-                    onMouseEnter={(e) => handleEventHover(event, e)}
-                    onMouseLeave={handleEventLeave}
-                    onMouseMove={(e) => handleMouseMove(event, e)}
+                    className="event-item-link"
                   >
-                    <div className="event-date">
-                      <span className="date-text">
-                        {dateFormatted.day}.{dateFormatted.month}.{dateFormatted.year}
-                      </span>
+                    <div
+                      className="event-item magneto-wrapper"
+                      ref={(el) => {
+                        if (el && observerRef.current) {
+                          observerRef.current.observe(el)
+                        }
+                      }}
+                      style={{ animationDelay: `${index * 0.1}s` }}
+                      onMouseEnter={(e) => handleEventHover(event, e)}
+                      onMouseLeave={handleEventLeave}
+                      onMouseMove={(e) => handleMouseMove(event, e)}
+                    >
+                      <div className="event-date">
+                        <span className="date-text">
+                          {dateFormatted.day}.{dateFormatted.month}.{dateFormatted.year}
+                        </span>
+                      </div>
+                      
+                      <div className="event-location">
+                        <span className="location-text">{event.location}</span>
+                      </div>
+                      
+                      <div className="event-details">
+                        <h2 className="event-title">{event.title}</h2>
+                      </div>
                     </div>
-                    
-                    <div className="event-location">
-                      <span className="location-text">{event.location}</span>
-                    </div>
-                    
-                    <div className="event-details">
-                      <h2 className="event-title">{event.title}</h2>
-                    </div>
-                  </div>
+                  </Link>
                 )
               })}
               
@@ -267,19 +272,6 @@ export default function Dates() {
               )}
             </div>
           )}
-        </div>
-
-        {/* Follow Button */}
-        {/* <div className="follow-section">
-          <button className="follow-btn magneto-wrapper">
-            <span className="follow-icon">👤</span>
-            Follow
-          </button>
-        </div> */}
-
-        {/* Footer */}
-        <div className="dates-footer">
-          <p>© Copyright 2023 - 2025 R&B Versus LIVE</p>
         </div>
       </div>
     </>
