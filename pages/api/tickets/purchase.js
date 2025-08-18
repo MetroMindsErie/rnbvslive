@@ -1,17 +1,14 @@
-import { v4 as uuidv4 } from 'uuid';
-import Stripe from 'stripe';
 import { supabase } from '../../../lib/supabase';
 import { generateTicketQR } from '../../../lib/qrcode';
 import { sendTicketConfirmationEmail, sendTicketConfirmationSMS } from '../../../lib/notifications';
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+import { createTicketPurchase } from '../../../lib/ticketService';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
   
-  const { eventId, email, phone, quantity = 1 } = req.body;
+  const { eventId, email, phone, fullName, quantity = 1 } = req.body;
   
   try {
     // 1. Get event details
@@ -30,39 +27,42 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Not enough tickets available' });
     }
     
-    // 3. Create a Stripe checkout session
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      line_items: [
-        {
-          price_data: {
-            currency: 'usd',
-            product_data: {
-              name: `Ticket for ${event.title}`,
-              description: event.description,
-              images: event.image_url ? [event.image_url] : [],
-            },
-            unit_amount: event.ticket_price,
-          },
-          quantity,
-        },
-      ],
-      mode: 'payment',
-      success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/tickets/confirmation?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/events/${eventId}`,
-      client_reference_id: eventId,
-      customer_email: email,
-      metadata: {
-        eventId,
-        email,
-        phone,
-        quantity
-      }
-    });
+    // 3. Create the ticket purchase directly
+    const purchaseData = {
+      fullName,
+      email,
+      phoneNumber: phone,
+      totalAmount: event.ticket_price * quantity
+    };
     
-    return res.status(200).json({ sessionId: session.id, url: session.url });
+    const { purchase, tickets } = await createTicketPurchase(purchaseData, eventId, quantity);
+    
+    // 4. Update the tickets_remaining count
+    await supabase
+      .from('events')
+      .update({ tickets_remaining: event.tickets_remaining - quantity })
+      .eq('id', eventId);
+    
+    // 5. Send confirmation notifications
+    try {
+      await sendTicketConfirmationEmail(email, { purchase, tickets, event });
+      if (phone) {
+        await sendTicketConfirmationSMS(phone, { purchase, event });
+      }
+    } catch (notificationError) {
+      console.error('Error sending notifications:', notificationError);
+      // Continue even if notifications fail
+    }
+    
+    return res.status(200).json({ 
+      success: true, 
+      purchase,
+      tickets,
+      redirectUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/tickets/confirmation?purchase_id=${purchase.id}`
+    });
   } catch (error) {
     console.error('Error in ticket purchase:', error);
     return res.status(500).json({ error: error.message });
   }
 }
+

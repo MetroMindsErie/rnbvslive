@@ -17,6 +17,7 @@
     "framer-motion": "^12.23.12",
     "html5-qrcode": "^2.3.8",
     "next": "14.0.3",
+    "nodemailer": "^7.0.5",
     "qrcode": "^1.5.4",
     "qrcode.react": "^4.2.0",
     "react": "^18.2.0",

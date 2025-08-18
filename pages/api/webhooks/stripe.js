@@ -1,112 +1,80 @@
-import { buffer } from 'micro';
-import Stripe from 'stripe';
 import { supabase } from '../../../lib/supabase';
 import { generateTicketQR } from '../../../lib/qrcode';
 import { sendTicketConfirmationEmail, sendTicketConfirmationSMS } from '../../../lib/notifications';
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+import { createTicketPurchase } from '../../../lib/ticketService';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const buf = await buffer(req);
-  const sig = req.headers['stripe-signature'];
+  const { eventId, email, phone, fullName, quantity, orderId, userId } = req.body;
 
-  let event;
+  if (!eventId || !email || !quantity) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
 
   try {
-    event = stripe.webhooks.constructEvent(buf.toString(), sig, webhookSecret);
-  } catch (err) {
-    console.error(`Webhook Error: ${err.message}`);
-    return res.status(400).send(`Webhook Error: ${err.message}`);
-  }
-
-  // Handle the checkout.session.completed event
-  if (event.type === 'checkout.session.completed') {
-    const session = event.data.object;
+    // Get event details
+    const { data: event, error: eventError } = await supabase
+      .from('events')
+      .select('*')
+      .eq('id', eventId)
+      .single();
     
-    try {
-      // Extract details from the session
-      const { eventId, email, phone, quantity } = session.metadata;
-      const orderId = session.payment_intent;
-      
-      // Get the user if they're logged in
-      let userId = null;
-      
-      if (session.customer) {
-        // Try to find user by email
-        const { data: userData } = await supabase
-          .from('users')
-          .select('id')
-          .eq('email', email)
-          .single();
-          
-        if (userData) {
-          userId = userData.id;
-        }
-      }
-      
-      // Get event details
-      const { data: event } = await supabase
-        .from('events')
-        .select('*')
-        .eq('id', eventId)
-        .single();
-      
-      // Create tickets (one for each quantity)
-      const ticketPromises = [];
-      
-      for (let i = 0; i < parseInt(quantity); i++) {
-        // Call the RPC function to purchase a ticket
-        const { data: ticketId, error } = await supabase.rpc(
-          'purchase_ticket',
-          {
-            p_event_id: eventId,
-            p_user_id: userId,
-            p_order_id: orderId,
-            p_buyer_email: email,
-            p_buyer_phone: phone
-          }
-        );
-        
-        if (error) throw error;
-        
-        // Generate QR code for this ticket
-        const qrCodeUrl = await generateTicketQR(ticketId, eventId);
-        
-        // Get the ticket details
-        const { data: ticket } = await supabase
-          .from('tickets')
-          .select('*')
-          .eq('id', ticketId)
-          .single();
-        
-        // Send confirmation
-        await sendTicketConfirmationEmail(ticket, event, qrCodeUrl);
-        if (phone) {
-          await sendTicketConfirmationSMS(ticket, event);
-        }
-        
-        ticketPromises.push(ticketId);
-      }
-      
-      await Promise.all(ticketPromises);
-      
-      res.status(200).json({ received: true });
-    } catch (error) {
-      console.error('Error processing successful payment:', error);
-      res.status(500).json({ error: error.message });
+    if (eventError) {
+      return res.status(404).json({ error: 'Event not found' });
     }
-  } else {
-    res.status(200).json({ received: true });
+    
+    // Check if tickets are available
+    if (event.tickets_remaining < quantity) {
+      return res.status(400).json({ error: 'Not enough tickets available' });
+    }
+    
+    // Create the ticket purchase
+    const purchaseData = {
+      fullName,
+      email,
+      phoneNumber: phone,
+      totalAmount: event.ticket_price * quantity,
+      orderId
+    };
+    
+    const { purchase, tickets } = await createTicketPurchase(purchaseData, eventId, quantity);
+    
+    // Update the tickets_remaining count
+    await supabase
+      .from('events')
+      .update({ tickets_remaining: event.tickets_remaining - quantity })
+      .eq('id', eventId);
+    
+    // Associate tickets with user if provided
+    if (userId) {
+      await supabase
+        .from('ticket_purchases')
+        .update({ user_id: userId })
+        .eq('id', purchase.id);
+    }
+    
+    // Send confirmations
+    try {
+      await sendTicketConfirmationEmail(email, { purchase, tickets, event });
+      if (phone) {
+        await sendTicketConfirmationSMS(phone, { purchase, event });
+      }
+    } catch (notificationError) {
+      console.error('Error sending notifications:', notificationError);
+      // Continue even if notifications fail
+    }
+    
+    return res.status(200).json({ 
+      success: true,
+      purchase,
+      tickets
+    });
+  } catch (error) {
+    console.error('Error processing ticket creation:', error);
+    return res.status(500).json({ error: error.message });
   }
 }
+      
