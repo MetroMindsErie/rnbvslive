@@ -52,6 +52,23 @@ export default function EventDetail() {
         return timeString
     }
 
+    const handleBuyTickets = () => {
+        // Save event details to localStorage for checkout page
+        if (event) {
+            localStorage.setItem('ticketPurchase', JSON.stringify({
+                eventId: event.id,
+                eventTitle: event.title,
+                eventDate: event.date,
+                eventTime: formatTime(event.time),
+                eventVenue: event.venue || event.location,
+                eventImageUrl: event.image_url
+            }));
+            
+            // Redirect to checkout page
+            router.push(`/checkout/${event.id}`);
+        }
+    }
+
     if (loading) {
         return (
             <div className="event-detail-loading">
@@ -131,7 +148,10 @@ export default function EventDetail() {
                         </div>
 
                         <div className="event-actions">
-                            <button className="buy-tickets-btn">
+                            <button 
+                                className="buy-tickets-btn"
+                                onClick={handleBuyTickets}
+                            >
                                 Buy Tickets
                             </button>
                         </div>

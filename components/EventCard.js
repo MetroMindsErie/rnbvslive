@@ -1,8 +1,9 @@
-import Image from 'next/image'
-import Link from 'next/link'
+import { useRouter } from 'next/router';
+import Image from 'next/image';
 import { useState } from 'react'
 
-export default function EventCard({ event, dateFormatted }) {
+export default function EventCard({ event }) {
+  const router = useRouter();
   const [imageError, setImageError] = useState(false)
   const [imageLoading, setImageLoading] = useState(true)
 
@@ -26,9 +27,30 @@ export default function EventCard({ event, dateFormatted }) {
     return event.image.startsWith('/') ? event.image : `/media/${event.image}`
   }
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  };
+  
+  const formatPrice = (cents) => {
+    return `$${(cents / 100).toFixed(2)}`;
+  };
+  
+  const handleClick = () => {
+    router.push(`/events/${event.id}`);
+  };
+  
+  const ticketsRemaining = event.tickets_remaining;
+  const soldOutPercentage = 100 - Math.round((ticketsRemaining / event.total_tickets) * 100);
+
   return (
     <article className="event-card">
-      <div className="event-card-inner">
+      <div className="event-card-inner" onClick={handleClick}>
         
         {/* Event Image */}
         <div className="event-image-container">
