@@ -13,6 +13,9 @@ export default function Dates() {
   const cursorRef = useRef(null)
   const imageRef = useRef(null)
 
+  // Get window width for responsive styling
+  const [windowWidth, setWindowWidth] = useState(0);
+  
   useEffect(() => {
     fetchEvents()
     setupScrollAnimations()
@@ -24,10 +27,18 @@ export default function Dates() {
     img.onerror = () => console.error('Background image failed to load')
     img.src = '/images/athletic.jpg'
     
+    // Set initial window width
+    setWindowWidth(window.innerWidth);
+    
+    // Update window width on resize
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    
     return () => {
       if (observerRef.current) {
         observerRef.current.disconnect()
       }
+      window.removeEventListener('resize', handleResize);
     }
   }, [])
 
@@ -169,6 +180,10 @@ export default function Dates() {
     }
   }
 
+  // Calculate top padding based on screen size
+  const isMobile = windowWidth <= 768;
+  const topPadding = isMobile ? '140px' : '110px';
+
   return (
     <>
       <Head>
@@ -206,7 +221,7 @@ export default function Dates() {
         </div>
       )}
 
-      <div className="dates-page-layout">
+      <div className="dates-page-layout" style={{ paddingTop: topPadding }}>
         {/* Background */}
         <div className="dates-background"></div>
         

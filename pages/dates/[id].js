@@ -78,7 +78,7 @@ export default function EventDetail() {
                 <meta name="description" content={event.description || `Join us for ${event.title}`} />
             </Head>
 
-            <div className="min-h-screen bg-gray-900 text-white">
+            <div className="min-h-screen bg-[#1a1a1a] text-white w-full overflow-x-hidden">
                 <div
                     className="event-detail-container"
                     data-event-date={`${dateFormatted.day}.${dateFormatted.month}`}

@@ -6,6 +6,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:400,400i|Red+Hat+Display:400,400i,500,500i,700,700i,900,900i&display=swap&subset=latin-ext');
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
+/* Add this at the top of the file to ensure full width and no overflow */
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #1a1a1a;
+}
+
 @layer base {
   html {
     font-family: 'Inter', system-ui, sans-serif;
@@ -181,12 +190,14 @@
     top: 0;
     left: 0;
     right: 0;
-    background: transparent;
+    background: transparent; /* Completely transparent background for desktop */
     padding: 15px 30px;
     z-index: 1000;
     font-family: 'Montserrat', 'Red Hat Display', sans-serif;
-    backdrop-filter: none;
+    backdrop-filter: none; /* No blur effect */
     -webkit-backdrop-filter: none;
+    width: 100%;
+    max-width: 100vw;
   }
   
   /* Container for nav elements */
@@ -242,19 +253,19 @@
     font-size: 0.9rem;
     font-weight: 500;
     padding: 0.5rem 1rem;
-    border-radius: 4px;
+    /* border-radius: 4px; */
     transition: all 0.3s ease;
     letter-spacing: 0.5px;
+    position: relative; /* Ensure position is set for absolute positioning of :after */
+    border-bottom: none; /* Explicitly remove any borders */
   }
   
   .nav-link:hover {
     color: white;
-    box-shadow: inset 0 -2px 0 #001A57;
   }
   
   .nav-link.active {
     color: white;
-    background: rgba(0, 26, 87, 0.12);
     font-weight: 500;
   }
   
@@ -268,8 +279,8 @@
   /* Mobile-specific styling */
   @media (max-width: 768px) {
     .rnb-navbar {
-      padding: 10px 15px !important;
-      background: transparent;
+      padding: 10px 15px 40px 15px !important; /* Increased bottom padding */
+      background: #1a1a1a !important; /* Match the #1a1a1a of pages */
     }
     
     /* Container takes full width with even spacing */
@@ -365,17 +376,23 @@
       transition: all 0.2s ease;
       position: relative;
       white-space: nowrap;
+      border-bottom: none; /* Ensure no border */
+      text-decoration: none; /* Explicitly remove text decoration */
     }
     
+    /* Completely replace the after pseudo-element styling */
     .nav-link:after {
       content: '';
       position: absolute;
       bottom: -2px;
       left: 0.75rem;
       right: 0.75rem;
-      height: 2px;
+      height: 1px;
       background-color: transparent;
       transition: all 0.2s ease;
+      /* Ensure no conflicting styles */
+      border: none;
+      box-shadow: none;
     }
     
     .nav-link:hover:after {
@@ -384,6 +401,12 @@
     
     .nav-link.active:after {
       background-color: #fff;
+      height: 1px; /* Ensure consistent height */
+    }
+    
+    /* Remove any potential :before pseudo-element */
+    .nav-link:before {
+      display: none;
     }
     
     /* Right side actions */
@@ -616,19 +639,25 @@
     top: 0;
     left: 0;
     right: 0;
-    background: transparent; /* Completely transparent background */
+    background: transparent; /* Completely transparent background for desktop */
     padding: 15px 30px;
     z-index: 1000;
     font-family: 'Montserrat', 'Red Hat Display', sans-serif;
-    backdrop-filter: none; /* Remove blur effect */
+    backdrop-filter: none; /* No blur effect */
     -webkit-backdrop-filter: none;
   }
 
-  /* Fix for mobile navbar visibility while keeping it transparent */
+  /* Fix for mobile navbar visibility */
   @media (max-width: 768px) {
     .rnb-navbar {
-      background: transparent; /* Keep transparent on mobile */
-      padding: 10px 15px 10px 80px; /* Add left padding to avoid logo overlap */
+      background: #1a1a1a !important; /* Match the #1a1a1a of pages */
+      padding: 10px 15px 60px 15px !important;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      width: 100%;
+      max-width: 100%;
+      left: 0;
+      right: 0;
     }
     
     .nav-container-simplified {
@@ -854,11 +883,23 @@
     background: rgba(255, 255, 255, 0.2);
   }
 
+  /* Remove focus outline for mouse users but keep for keyboard navigation */
+  button:focus:not(:focus-visible),
+  a:focus:not(:focus-visible),
+  input:focus:not(:focus-visible),
+  select:focus:not(:focus-visible),
+  textarea:focus:not(:focus-visible),
+  [tabindex]:focus:not(:focus-visible) {
+    outline: none;
+    box-shadow: none;
+    ring-width: 0;
+    ring-offset-width: 0;
+  }
+
   /* Menu button animation */
   .menu-button {
     position: relative;
-    z-index: 1060;
-    /* Above the overlay */
+    z-index: 1200; /* Increased z-index to be above all page content */
     background: transparent;
     border: none;
     cursor: pointer;
@@ -872,6 +913,7 @@
     font-size: 0.9rem;
     letter-spacing: 1px;
     text-transform: uppercase;
+    -webkit-tap-highlight-color: transparent; /* Removes tap highlight on mobile */
   }
 
   .hamburger {
@@ -1023,6 +1065,209 @@
     to {
       transform: rotate(360deg);
     }
+  }
+
+  /* Social Share Component Styling */
+  .social-share-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 1rem 0;
+    padding-bottom: 15px;
+  }
+
+  /* Center social share container on mobile */
+  @media (max-width: 768px) {
+    .social-share-container {
+      justify-content: center;
+      width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+
+  /* Size variations */
+  .social-share-sm .social-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .social-share-md .social-btn {
+    width: 40px;
+    height: 40px;
+  }
+
+  .social-share-lg .social-btn {
+    width: 48px;
+    height: 48px;
+  }
+
+  /* Button base styling */
+  .social-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .social-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  }
+
+  .social-btn:active {
+    transform: translateY(-1px);
+  }
+
+  /* Icon styling */
+  .social-icon {
+    width: 50%;
+    height: 50%;
+    transition: all 0.3s ease;
+    fill: white;
+  }
+
+  /* Individual social button styling - Default variant */
+  .social-share-default .social-btn-facebook {
+    background-color: #1877F2;
+  }
+
+  .social-share-default .social-btn-twitter {
+    background-color: #000000;
+  }
+
+  .social-share-default .social-btn-linkedin {
+    background-color: #0A66C2;
+  }
+
+  .social-share-default .social-btn-instagram {
+    background: linear-gradient(45deg, #833AB4, #FD1D1D, #F77737);
+  }
+
+  .social-share-default .social-btn-tiktok {
+    background-color: #000000;
+    position: relative;
+  }
+
+  .social-share-default .social-btn-tiktok::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: linear-gradient(90deg, #00f2ea, #ff0050);
+    opacity: 0.3;
+    transition: opacity 0.3s ease;
+  }
+
+  .social-share-default .social-btn-tiktok:hover::before {
+    opacity: 0.5;
+  }
+
+  .social-share-default .social-btn-copy {
+    background-color: #444;
+  }
+
+  .social-share-default .social-btn-copy.copied {
+    background-color: #00C853;
+  }
+
+  /* Minimal variant */
+  .social-share-minimal .social-btn {
+    background-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .social-share-minimal .social-btn:hover {
+    border-color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  .social-share-minimal .social-icon {
+    fill: rgba(255, 255, 255, 0.8);
+  }
+
+  .social-share-minimal .social-btn:hover .social-icon {
+    fill: white;
+  }
+
+  .social-share-minimal .social-btn-copy.copied .social-icon {
+    fill: #00C853;
+  }
+
+  /* Filled variant */
+  .social-share-filled .social-btn {
+    border-radius: 8px;
+  }
+
+  .social-share-filled .social-btn-facebook {
+    background-color: #1877F2;
+  }
+
+  .social-share-filled .social-btn-twitter {
+    background-color: #000000;
+  }
+
+  .social-share-filled .social-btn-linkedin {
+    background-color: #0A66C2;
+  }
+
+  .social-share-filled .social-btn-instagram {
+    background: linear-gradient(45deg, #833AB4, #FD1D1D, #F77737);
+  }
+
+  .social-share-filled .social-btn-tiktok {
+    background-color: #000000;
+    position: relative;
+  }
+
+  .social-share-filled .social-btn-tiktok::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: linear-gradient(90deg, #00f2ea, #ff0050);
+    opacity: 0.3;
+    transition: opacity 0.3s ease;
+    border-radius: 8px;
+  }
+
+  .social-share-filled .social-btn-tiktok:hover::before {
+    opacity: 0.5;
+  }
+
+  .social-share-filled .social-btn-copy {
+    background-color: #444;
+  }
+
+  .social-share-filled .social-btn-copy.copied {
+    background-color: #00C853;
+  }
+
+  /* Animation for the copied state */
+  @keyframes checkmark {
+    0% {
+      transform: scale(0);
+    }
+    50% {
+      transform: scale(1.2);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  .social-btn-copy.copied .social-icon {
+    animation: checkmark 0.3s ease-out;
   }
 
   /* Custom scrollbar */
