@@ -1,4 +1,4 @@
-import { supabase } from '../../../lib/supabaseClient';
+import { supabase } from '../../../lib/supabase';
 import { verifyTicketQR } from '../../../lib/qrcode';
 import { verifyTicket } from '../../../lib/ticketService';
 

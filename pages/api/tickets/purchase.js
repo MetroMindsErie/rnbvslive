@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import Stripe from 'stripe';
-import { supabase } from '../../../lib/supabaseClient';
+import { supabase } from '../../../lib/supabase';
 import { generateTicketQR } from '../../../lib/qrcode';
 import { sendTicketConfirmationEmail, sendTicketConfirmationSMS } from '../../../lib/notifications';
 
