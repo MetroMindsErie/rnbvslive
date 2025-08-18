@@ -1,5 +1,3 @@
-import { supabase } from '../../../lib/supabase';
-import { verifyTicketQR } from '../../../lib/qrcode';
 import { verifyTicket } from '../../../lib/ticketService';
 
 export default async function handler(req, res) {
