@@ -280,7 +280,7 @@ html, body {
   @media (max-width: 768px) {
     .rnb-navbar {
       padding: 10px 15px 40px 15px !important; /* Increased bottom padding */
-      background: #1a1a1a !important; /* Match the #1a1a1a of pages */
+      background: #000000 !important; /* Changed from #1a1a1a to black */
     }
     
     /* Container takes full width with even spacing */
@@ -650,7 +650,7 @@ html, body {
   /* Fix for mobile navbar visibility */
   @media (max-width: 768px) {
     .rnb-navbar {
-      background: #1a1a1a !important; /* Match the #1a1a1a of pages */
+      background: #000000 !important; /* Changed from #1a1a1a to black */
       padding: 10px 15px 60px 15px !important;
       backdrop-filter: none;
       -webkit-backdrop-filter: none;
