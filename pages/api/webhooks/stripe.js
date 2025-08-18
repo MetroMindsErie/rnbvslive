@@ -1,5 +1,4 @@
 import { supabase } from '../../../lib/supabase';
-import { generateTicketQR } from '../../../lib/qrcode';
 import { sendTicketConfirmationEmail, sendTicketConfirmationSMS } from '../../../lib/notifications';
 import { createTicketPurchase } from '../../../lib/ticketService';
 
