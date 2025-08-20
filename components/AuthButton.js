@@ -32,6 +32,11 @@ export default function AuthButton() {
         setShowAuthOptions((v) => !v);
     };
 
+    // Hide menu when login is clicked
+    const handleLoginClick = () => {
+        setShowAuthOptions(false);
+    };
+
     return (
         <div
             ref={containerRef}
@@ -47,7 +52,7 @@ export default function AuthButton() {
                 onClick={handleButtonClick}
                 className="auth-button"
                 style={{
-                    background: 'linear-gradient(135deg, #232526 0%, #414345 100%)',
+                    background: 'black',
                     border: '2px solid #fff',
                     borderRadius: '50%',
                     padding: '12px',
@@ -64,11 +69,11 @@ export default function AuthButton() {
                     transition: 'box-shadow 0.2s, background 0.2s',
                 }}
                 onMouseOver={e => {
-                    e.currentTarget.style.background = 'linear-gradient(135deg, #3a3a3a 0%, #232526 100%)';
+                    e.currentTarget.style.background = '#111';
                     e.currentTarget.style.boxShadow = '0 4px 16px 4px #232526, 0 8px 32px 0 #111112';
                 }}
                 onMouseOut={e => {
-                    e.currentTarget.style.background = 'linear-gradient(135deg, #232526 0%, #414345 100%)';
+                    e.currentTarget.style.background = 'black';
                     e.currentTarget.style.boxShadow = '0 2px 10px 2px #232526, 0 4px 24px 0 #111112';
                 }}
             >
@@ -82,13 +87,13 @@ export default function AuthButton() {
                         position: 'absolute',
                         top: '60px',
                         right: '0',
-                        background: 'linear-gradient(135deg, #232526 0%, #414345 100%)',
+                        background: '#000',
                         backdropFilter: 'blur(10px)',
                         borderRadius: '10px',
                         padding: '12px 0',
                         width: '200px',
                         boxShadow: '0 8px 32px 4px #232526, 0 16px 48px 0 #111112',
-                        border: '1.5px solid #444',
+                        border: '1.5px solid #222',
                         pointerEvents: 'auto',
                         display: 'flex',
                         flexDirection: 'column',
@@ -111,8 +116,9 @@ export default function AuthButton() {
                             background: 'transparent',
                             transition: 'background 0.2s, box-shadow 0.2s',
                         }}
+                        onClick={handleLoginClick}
                         onMouseOver={e => {
-                            e.currentTarget.style.background = 'linear-gradient(90deg, #444 0%, #232526 100%)';
+                            e.currentTarget.style.background = '#111';
                             e.currentTarget.style.boxShadow = '0 2px 8px 0 #111112';
                         }}
                         onMouseOut={e => {
@@ -122,33 +128,6 @@ export default function AuthButton() {
                     >
                         <FiLogIn style={{ marginRight: '12px' }} />
                         Login
-                    </Link>
-                    <Link
-                        href="/signup"
-                        className="auth-option"
-                        style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            padding: '14px 20px',
-                            color: '#fff',
-                            textDecoration: 'none',
-                            borderRadius: '6px',
-                            fontWeight: '500',
-                            fontSize: '1rem',
-                            background: 'transparent',
-                            transition: 'background 0.2s, box-shadow 0.2s',
-                        }}
-                        onMouseOver={e => {
-                            e.currentTarget.style.background = 'linear-gradient(90deg, #444 0%, #232526 100%)';
-                            e.currentTarget.style.boxShadow = '0 2px 8px 0 #111112';
-                        }}
-                        onMouseOut={e => {
-                            e.currentTarget.style.background = 'transparent';
-                            e.currentTarget.style.boxShadow = 'none';
-                        }}
-                    >
-                        <FiUser style={{ marginRight: '12px' }} />
-                        Sign Up
                     </Link>
                 </div>
             )}
