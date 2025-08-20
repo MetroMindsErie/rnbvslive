@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import { useAuth } from '../contexts/AuthContext'
 import { signOut } from '../lib/supabase/client'
 import Navbar from '../components/Navbar'
+import RnbBlog from '../components/RnbBlog'
 
 export default function Dashboard() {
   const { user, profile, loading } = useAuth()
@@ -39,6 +40,9 @@ export default function Dashboard() {
       <Navbar />
       <div style={{ height: '60px', width: '100%' }}></div>
       <main className="max-w-5xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        {/* --- Blog Section (public for all) --- */}
+        <RnbBlog />
+
         {/* If not logged in, show guest dashboard */}
         {!user && (
           <div className="bg-[#23272f] rounded-xl shadow-lg p-8 text-center">
