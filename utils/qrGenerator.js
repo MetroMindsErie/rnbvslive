@@ -1,5 +1,5 @@
 import QRCode from 'qrcode';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabase/client';
 
 /**
  * Generate a QR code for a ticket and store it in Supabase

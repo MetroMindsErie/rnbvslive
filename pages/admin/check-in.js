@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../../lib/supabase/client';
 import QRScanner from '../../components/QRScanner';
 
 export default function CheckInPage() {

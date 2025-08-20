@@ -1,7 +1,7 @@
 // pages/login.js
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { signInWithGoogle } from '../lib/supabase'
+import { signInWithGoogle } from '../lib/supabase/client'
 import { useAuth } from '../contexts/AuthContext'
 import Navbar from '../components/Navbar'
 

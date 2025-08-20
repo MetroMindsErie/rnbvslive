@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { supabase } from '../lib/supabase'
+import { supabase } from '../lib/supabase/client'
 import Head from 'next/head'
 import Link from 'next/link'
 

@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { supabase } from '../lib/supabase'
+import { supabase } from '../lib/supabase/client'
 import AuthButton from './AuthButton' // <-- Add this import
 
 export default function Navbar({ isMobile }) {

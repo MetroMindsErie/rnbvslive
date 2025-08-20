@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
-import { supabase } from '../../lib/supabase'
+import { supabase } from '../../lib/supabase/client'
 import EventCard from '../../components/EventCard';
 
 export default function EventsPage() {

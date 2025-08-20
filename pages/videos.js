@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { supabase } from '../lib/supabase'
+import { supabase } from '../lib/supabase/client'
 import VideoCard from '../components/VideoCard'
 
 export default function Videos() {

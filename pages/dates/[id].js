@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { supabase } from '../../lib/supabase'
+import { supabase } from '../../lib/supabase/client'
 import Head from 'next/head'
 import Link from 'next/link'
 import SocialShare from '../../components/SocialShare'

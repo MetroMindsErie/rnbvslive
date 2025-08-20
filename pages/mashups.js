@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { supabase } from '../lib/supabase'
+import { supabase } from '../lib/supabase/client'
 import CasketViewerSection from '../CasketViewerSection'
 import BackgroundImage from '../components/BackgroundImage'
 import Head from 'next/head'

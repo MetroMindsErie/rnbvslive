@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { supabase } from '../lib/supabase'
+import { supabase } from '../lib/supabase/client'
 import CartItem from '../components/CartItem'
 
 export default function Cart() {

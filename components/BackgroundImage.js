@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { supabase } from '../lib/supabase'
+import { supabase } from '../lib/supabase/client'
 
 /**
  * Reusable background image component that fetches images from Supabase storage

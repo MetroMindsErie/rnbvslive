@@ -1,5 +1,5 @@
 // This file is no longer needed - functionality moved to Navbar.js
-import { supabase } from '../lib/supabase'
+import { supabase } from '../lib/supabase/client'
 
 export default function FloatingNav() {
   const [email, setEmail] = useState('')
