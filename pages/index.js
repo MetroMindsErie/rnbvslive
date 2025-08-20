@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import dynamic from 'next/dynamic'
+import AuthButton from '../components/AuthButton'
 
 // Dynamically import CursorEffect with no SSR to avoid hydration issues
 const CursorEffect = dynamic(() => import('../components/CursorEffect'), {
@@ -7,17 +8,11 @@ const CursorEffect = dynamic(() => import('../components/CursorEffect'), {
 })
 
 export default function Home({ isMobile }) {
-  const [loading, setLoading] = useState(true)
   const backgroundRef = useRef(null)
   const contentRef = useRef(null)
   const socialTagsRef = useRef(null)
 
   useEffect(() => {
-    // Set loading state after mount to avoid hydration mismatch
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 100);
-    
     // Safe background handling with error check
     try {
       if (backgroundRef.current) {
@@ -26,8 +21,6 @@ export default function Home({ isMobile }) {
     } catch (err) {
       console.error("Background ref error:", err);
     }
-    
-    return () => clearTimeout(timer);
   }, []);
 
   // Safe render to prevent hydration issues and mobile errors
@@ -35,8 +28,8 @@ export default function Home({ isMobile }) {
     <>
       {/* Only render cursor effect for desktop */}
       {!isMobile && <CursorEffect />}
-
-      <div className="homepage-container" style={{ height: '100vh', overflow: 'hidden' }}>
+      
+      <div className="homepage-container" style={{ height: '100vh', overflow: 'hidden', position: 'relative' }}>
         {/* Background - completely static */}
         <div 
           ref={backgroundRef}
@@ -51,15 +44,16 @@ export default function Home({ isMobile }) {
             width: "100%",
             height: "100%",
             backgroundColor: "#000",
-            transform: "none"
+            transform: "none",
+            zIndex: 1 // Make sure this is lower than the auth button
           }}
         />
         
         {/* Background Overlay */}
-        <div className="background-overlay" />
+        <div className="background-overlay" style={{ zIndex: 2 }} />
         
         {/* Floating particles animation - reduce count on mobile */}
-        <div className="particles-container">
+        <div className="particles-container" style={{ zIndex: 3 }}>
           {[...Array(isMobile ? 10 : 20)].map((_, i) => (
             <div 
               key={i} 
@@ -74,7 +68,15 @@ export default function Home({ isMobile }) {
         </div>
 
         {/* Content Layer with ref for grabbing effect */}
-        <div className="content-layer" ref={contentRef} style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="content-layer" ref={contentRef} style={{ 
+          height: '100vh', 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center',
+          position: 'relative',
+          zIndex: 4,
+          pointerEvents: 'auto'
+        }}>
           {/* Main Content - Social Media Tags with cursor effect */}
           <div className="main-content">
             <div className="social-tags-container">
@@ -91,6 +93,18 @@ export default function Home({ isMobile }) {
           </div>
         </div>
       </div>
+
+      <style jsx>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Make sure nothing is interfering with clicks */
+        .homepage-container * {
+          pointer-events: auto;
+        }
+      `}</style>
     </>
   )
 }
@@ -107,4 +121,3 @@ Home.getInitialProps = async (ctx) => {
   
   return { isMobile };
 }
-

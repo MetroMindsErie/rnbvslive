@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { supabase } from '../lib/supabase'
+import AuthButton from './AuthButton' // <-- Add this import
 
 export default function Navbar({ isMobile }) {
   const [cartCount, setCartCount] = useState(0)
@@ -110,7 +111,7 @@ export default function Navbar({ isMobile }) {
 
   return (
     <>
-      <nav className="rnb-navbar">
+      <nav className="rnb-navbar z-50">
         <div className="nav-container-simplified">
           {/* Logo - always leftmost element */}
           <Link href="/" className={isActuallyMobile ? "mobile-logo-container" : "desktop-logo-container"}>
@@ -147,6 +148,9 @@ export default function Navbar({ isMobile }) {
                 </svg>
                 {cartCount > 0 && <span className="cart-count-badge">{cartCount}</span>}
               </Link>
+
+              {/* Auth Button - always show on desktop, show on mobile if you want */}
+              <AuthButton />
 
               {/* Hamburger Menu Button - use isActuallyMobile instead of isMobile */}
               {isActuallyMobile && (
@@ -221,7 +225,7 @@ export default function Navbar({ isMobile }) {
       </nav>
       
       {/* Mobile spacer div - will push content down on mobile */}
-      <div style={mobileSpacerStyle}></div>
+      <div style={{ ...mobileSpacerStyle, zIndex: 0, position: 'relative' }}></div>
     </>
   )
 }

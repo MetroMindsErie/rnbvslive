@@ -9,23 +9,24 @@ import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import FollowButton from '../components/FollowButton'
 import { useState, useEffect } from 'react'
+import { AuthProvider } from '../contexts/AuthContext'
 
 // Simple error boundary component
 function ErrorBoundary({ children }) {
   const [hasError, setHasError] = useState(false);
-  
+
   useEffect(() => {
     window.onerror = (msg, src, lineNo, colNo, error) => {
       console.error("Caught window error:", error);
       setHasError(true);
       return true; // Prevents default error handling
     };
-    
+
     return () => {
       window.onerror = null;
     };
   }, []);
-  
+
   if (hasError) {
     return (
       <div className="error-fallback">
@@ -37,7 +38,7 @@ function ErrorBoundary({ children }) {
       </div>
     );
   }
-  
+
   return children;
 }
 
@@ -45,7 +46,7 @@ export default function App({ Component, pageProps }) {
   const router = useRouter()
   const isHomePage = router.pathname === '/'
   const [isMobile, setIsMobile] = useState(false)
-  
+
   useEffect(() => {
     // Detect if we're on mobile
     const checkMobile = () => {
@@ -57,33 +58,35 @@ export default function App({ Component, pageProps }) {
         )
       );
     };
-    
+
     setIsMobile(checkMobile());
-    
+
     // Add classes to body for mobile vs desktop styling
     if (checkMobile()) {
       document.body.classList.add('is-mobile-device');
     } else {
       document.body.classList.add('is-desktop-device');
     }
-    
+
     return () => {
       document.body.classList.remove('is-mobile-device', 'is-desktop-device');
     };
   }, []);
-  
-  return (
-    <Layout>
-      <ErrorBoundary>
-        <CursorEffect />
-        {!isHomePage && <Navbar />}
-        
-        <div id="page-content" className="page-wrapper">
-          <Component {...pageProps} isMobile={isMobile} />
-        </div>
 
-        <FollowButton /> {/* Added to all pages */}
-      </ErrorBoundary>
-    </Layout>
+  return (
+    <AuthProvider>
+      <Layout>
+        <ErrorBoundary>
+          <CursorEffect />
+          {!isHomePage && <Navbar />}
+          <div id="page-content" className="page-wrapper">
+            <Component {...pageProps} isMobile={isMobile} />
+          </div>
+
+          <FollowButton /> {/* Added to all pages */}
+        </ErrorBoundary>
+      </Layout>
+    </AuthProvider>
+
   )
 }

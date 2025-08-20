@@ -5,6 +5,7 @@
 /* Update font import to include Montserrat and Red Hat Display with specific weights */
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:400,400i|Red+Hat+Display:400,400i,500,500i,700,700i,900,900i&display=swap&subset=latin-ext');
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
 
 /* Add this at the top of the file to ensure full width and no overflow */
 html, body {
@@ -17,7 +18,7 @@ html, body {
 
 @layer base {
   html {
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Poppins', 'Inter', system-ui, sans-serif;
     height: 100%;
   }
 
@@ -250,9 +251,9 @@ html, body {
   .nav-link {
     color: rgba(255, 255, 255, 0.9);
     text-decoration: none;
-    font-family: 'Montserrat', 'Red Hat Display', sans-serif;
+    font-family: 'Poppins', 'Montserrat', 'Red Hat Display', sans-serif;
     font-size: 0.9rem;
-    font-weight: 500;
+    font-weight: 1200;
     padding: 0.5rem 1rem;
     /* border-radius: 4px; */
     transition: all 0.3s ease;
@@ -369,6 +370,7 @@ html, body {
     }
     
     .nav-link {
+      font-family: 'Poppins', sans-serif;
       font-size: 0.9rem;
       font-weight: 500;
       letter-spacing: 0.5px;
@@ -764,7 +766,7 @@ html, body {
   .mobile-nav-link {
     color: rgba(255, 255, 255, 0.85);
     text-decoration: none;
-    font-family: 'Montserrat', 'Red Hat Display', sans-serif;
+    font-family: 'Poppins', 'Montserrat', 'Red Hat Display', sans-serif;
     font-size: 1.25rem;
     font-weight: 500;
     padding: 0.875rem 0;
