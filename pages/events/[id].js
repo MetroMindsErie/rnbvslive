@@ -1,45 +1,24 @@
-import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Image from 'next/image';
-import { supabase } from '../../lib/supabase/client'
+import useSupabaseSWR from '../../lib/supabase/useSupabaseSWR'
 import TicketPurchaseForm from '../../components/TicketPurchaseForm';
 
 export default function EventDetailsPage() {
   const router = useRouter();
   const { id } = router.query;
-  
-  const [event, setEvent] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  
-  useEffect(() => {
-    async function fetchEventDetails() {
-      if (!id) return;
-      
-      try {
-        setLoading(true);
-        
-        const { data, error } = await supabase
-          .from('events')
-          .select('*')
-          .eq('id', id)
-          .single();
-          
-        if (error) throw error;
-        
-        setEvent(data);
-      } catch (err) {
-        console.error('Error fetching event details:', err);
-        setError('Failed to load event details. Please try again later.');
-      } finally {
-        setLoading(false);
-      }
-    }
-    
-    fetchEventDetails();
-  }, [id]);
-  
+
+  const { data: event, error, isLoading } = useSupabaseSWR(
+    id ? ['events', id] : null,
+    id
+      ? {
+          table: 'events',
+          filter: { column: 'id', value: id },
+          single: true
+        }
+      : {}
+  )
+
   const formatDate = (dateString) => {
     if (!dateString) return '';
     
@@ -54,7 +33,7 @@ export default function EventDetailsPage() {
     });
   };
   
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-16 flex justify-center">
         <p className="text-gray-500">Loading event details...</p>
@@ -66,7 +45,7 @@ export default function EventDetailsPage() {
     return (
       <div className="container mx-auto px-4 py-16">
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
-          <p>{error || 'Event not found'}</p>
+          <p>{error?.message || 'Event not found'}</p>
           <button
             className="mt-4 bg-black text-white px-4 py-2 rounded hover:bg-gray-800"
             onClick={() => router.push('/events')}
@@ -147,3 +126,4 @@ export default function EventDetailsPage() {
     </>
   );
 }
+

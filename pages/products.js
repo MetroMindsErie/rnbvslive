@@ -1,42 +1,37 @@
-import { useState, useEffect } from 'react'
-import { supabase } from '../lib/supabase/client'
+import useSupabaseSWR from '../lib/supabase/useSupabaseSWR'
 import ProductCard from '../components/ProductCard'
+import { useState } from 'react'
 
 export default function Products() {
-  const [products, setProducts] = useState([])
-  const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('all')
-
-  useEffect(() => {
-    fetchProducts()
-  }, [])
-
-  const fetchProducts = async () => {
-    const { data, error } = await supabase
-      .from('products')
-      .select('*')
-      .order('name', { ascending: true })
-
-    if (error) {
-      console.error('Error fetching products:', error)
-    } else {
-      setProducts(data || [])
+  const { data: products = [], error, isLoading } = useSupabaseSWR(
+    'products',
+    {
+      table: 'products',
+      order: { column: 'name', ascending: true }
     }
-    setLoading(false)
-  }
+  )
 
   const categories = ['all', ...new Set(products.map(p => p.category))]
-  const filteredProducts = filter === 'all' 
-    ? products 
+  const filteredProducts = filter === 'all'
+    ? products
     : products.filter(product => product.category === filter)
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="loading-pulse text-center">
           <div className="preloader"></div>
           <p className="mt-4 text-gray-600">Loading products...</p>
         </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-red-500">Error loading products.</div>
       </div>
     )
   }
@@ -100,3 +95,4 @@ export default function Products() {
     </div>
   )
 }
+

@@ -1,41 +1,33 @@
 import React from 'react'
+import { useRouter } from 'next/router'
+import useSupabaseSWR from '../lib/supabase/useSupabaseSWR'
 
 export default function RnbBlog() {
-  // Example static blog posts; in a real app, fetch from API or CMS
-  const posts = [
+  const router = useRouter()
+  const { data: posts, error, isLoading } = useSupabaseSWR(
+    `blog_posts_${router.asPath}`,
     {
-      id: 1,
-      title: "The Evolution of R&B: From Soul to Trap",
-      excerpt: "Explore how R&B has transformed over the decades, blending soulful melodies with modern hip hop beats.",
-      image: "/images/PC.png",
-      author: "DJ Harmony",
-      date: "2024-06-01",
-      tags: ["R&B", "History", "Culture"]
-    },
-    {
-      id: 2,
-      title: "Top 5 Hip Hop & R&B Collabs of 2024",
-      excerpt: "Check out the hottest collaborations that are dominating the charts and clubs this year.",
-      image: "/images/PC31.png",
-      author: "MC Vibe",
-      date: "2024-05-20",
-      tags: ["Hip Hop", "Collabs", "2024"]
-    },
-    {
-      id: 3,
-      title: "R&B Versus Live: Behind the Scenes",
-      excerpt: "Go backstage with us and see how the magic happens at R&B Versus Live events.",
-      image: "/images/PC34.png",
-      author: "Queen Lyric",
-      date: "2024-05-10",
-      tags: ["Events", "Live", "Exclusive"]
+      table: 'blog_posts',
+      order: { column: 'published_date', ascending: false }
     }
-  ];
+  )
+
+  if (isLoading) {
+    return (
+      <div className="min-h-[300px] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <p className="mt-4 text-gray-400">Loading blog posts...</p>
+      </div>
+    )
+  }
+  if (error) {
+    return <div className="text-red-400 text-center py-8">Error loading blog posts.</div>
+  }
 
   return (
     <section className="mb-12">
       <h1 className="text-3xl md:text-4xl font-extrabold gradient-text mb-6 text-center tracking-tight">
-        {/* RNBV Live Blog */}
+        {/* R&B & Hip-Hop Entertainment Blog */}
       </h1>
       <div className="grid gap-8 md:grid-cols-3">
         {posts.map(post => (
@@ -49,14 +41,20 @@ export default function RnbBlog() {
             }}
           >
             <div className="relative h-48 w-full overflow-hidden">
-              <img
-                src={post.image}
-                alt={post.title}
-                className="object-cover w-full h-full transition-transform duration-300 hover:scale-105"
-                style={{ minHeight: 192, background: "#222" }}
-              />
+              {post.image_url ? (
+                <img
+                  src={post.image_url}
+                  alt={post.title}
+                  className="object-cover w-full h-full transition-transform duration-300 hover:scale-105"
+                  style={{ minHeight: 192, background: "#222" }}
+                />
+              ) : (
+                <div className="w-full h-full bg-gradient-to-br from-purple-400 to-blue-500 flex items-center justify-center">
+                  <span className="text-white text-4xl">📰</span>
+                </div>
+              )}
               <div className="absolute top-3 left-3 flex gap-2">
-                {post.tags.map(tag => (
+                {post.tags && Array.isArray(post.tags) && post.tags.map(tag => (
                   <span
                     key={tag}
                     className="bg-blue-700/80 text-xs text-white px-2 py-1 rounded-full font-semibold"
@@ -73,12 +71,21 @@ export default function RnbBlog() {
                 <span>
                   <span className="font-semibold">{post.author}</span>
                 </span>
-                <span>{new Date(post.date).toLocaleDateString()}</span>
+                <span>
+                  {post.published_date
+                    ? new Date(post.published_date).toLocaleDateString()
+                    : ''}
+                </span>
               </div>
             </div>
           </div>
         ))}
       </div>
+      {posts.length === 0 && (
+        <div className="text-center py-16">
+          <p className="text-gray-500 text-xl">No blog posts available yet. Check back soon!</p>
+        </div>
+      )}
     </section>
   );
 }

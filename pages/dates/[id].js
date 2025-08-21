@@ -1,6 +1,5 @@
-import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { supabase } from '../../lib/supabase/client'
+import useSupabaseSWR from '../../lib/supabase/useSupabaseSWR'
 import Head from 'next/head'
 import Link from 'next/link'
 import SocialShare from '../../components/SocialShare'
@@ -8,35 +7,17 @@ import SocialShare from '../../components/SocialShare'
 export default function EventDetail() {
     const router = useRouter()
     const { id } = router.query
-    const [event, setEvent] = useState(null)
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState(null)
 
-    useEffect(() => {
-        if (id) {
-            fetchEvent()
-        }
-    }, [id])
-
-    const fetchEvent = async () => {
-        try {
-            setLoading(true)
-            const { data, error } = await supabase
-                .from('events')
-                .select('*')
-                .eq('id', id)
-                .single()
-
-            if (error) throw error
-
-            setEvent(data)
-        } catch (err) {
-            console.error('Error fetching event:', err)
-            setError('Event not found')
-        } finally {
-            setLoading(false)
-        }
-    }
+    const { data: event, error, isLoading } = useSupabaseSWR(
+        id ? ['events', id] : null,
+        id
+            ? {
+                table: 'events',
+                filter: { column: 'id', value: id },
+                single: true
+            }
+            : {}
+    )
 
     const formatDate = (dateString) => {
         const date = new Date(dateString)
@@ -53,7 +34,6 @@ export default function EventDetail() {
     }
 
     const handleBuyTickets = () => {
-        // Save event details to localStorage for checkout page
         if (event) {
             localStorage.setItem('ticketPurchase', JSON.stringify({
                 eventId: event.id,
@@ -63,13 +43,11 @@ export default function EventDetail() {
                 eventVenue: event.venue || event.location,
                 eventImageUrl: event.image_url
             }));
-            
-            // Redirect to checkout page
             router.push(`/checkout/${event.id}`);
         }
     }
 
-    if (loading) {
+    if (isLoading) {
         return (
             <div className="event-detail-loading">
                 <div className="loading-text">Loading event...</div>
@@ -94,7 +72,6 @@ export default function EventDetail() {
                 <title>{event.title} - R&B Versus Live</title>
                 <meta name="description" content={event.description || `Join us for ${event.title}`} />
             </Head>
-
             <div className="min-h-screen bg-[#1a1a1a] text-white w-full overflow-x-hidden">
                 <div
                     className="event-detail-container"

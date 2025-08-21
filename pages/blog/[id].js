@@ -1,48 +1,35 @@
-import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { supabase } from '../../lib/supabase/client'
+import useSupabaseSWR from '../../lib/supabase/useSupabaseSWR'
 import Link from 'next/link'
 import Image from 'next/image'
 
 export default function BlogPost() {
   const router = useRouter()
   const { id } = router.query
-  const [post, setPost] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [relatedPosts, setRelatedPosts] = useState([])
 
-  useEffect(() => {
-    if (id) {
-      fetchPost()
-      fetchRelatedPosts()
-    }
-  }, [id])
+  // Fetch main post
+  const { data: post, error: postError, isLoading: postLoading } = useSupabaseSWR(
+    id ? ['blog_posts', id] : null,
+    id
+      ? {
+          table: 'blog_posts',
+          filter: { column: 'id', value: id },
+          single: true
+        }
+      : {}
+  )
 
-  const fetchPost = async () => {
-    const { data, error } = await supabase
-      .from('blog_posts')
-      .select('*')
-      .eq('id', id)
-      .single()
-
-    if (error) {
-      console.error('Error fetching blog post:', error)
-    } else {
-      setPost(data)
-    }
-    setLoading(false)
-  }
-
-  const fetchRelatedPosts = async () => {
-    const { data } = await supabase
-      .from('blog_posts')
-      .select('*')
-      .neq('id', id)
-      .order('published_date', { ascending: false })
-      .limit(3)
-    
-    setRelatedPosts(data || [])
-  }
+  // Fetch related posts (exclude current)
+  const { data: relatedPosts = [], error: relatedError } = useSupabaseSWR(
+    id ? ['blog_posts_related', id] : null,
+    id
+      ? {
+          table: 'blog_posts',
+          filter: { column: 'id', operator: 'neq', value: id },
+          order: { column: 'published_date', ascending: false }
+        }
+      : {}
+  )
 
   const formatDate = (dateString) => {
     const date = new Date(dateString)
@@ -53,7 +40,7 @@ export default function BlogPost() {
     })
   }
 
-  if (loading) {
+  if (postLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="loading-pulse text-center">
@@ -64,7 +51,7 @@ export default function BlogPost() {
     )
   }
 
-  if (!post) {
+  if (postError || !post) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -160,7 +147,7 @@ export default function BlogPost() {
           <div className="container mx-auto px-4">
             <h2 className="text-3xl font-bold text-center mb-12">Related Posts</h2>
             <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-              {relatedPosts.map((relatedPost) => (
+              {relatedPosts.slice(0, 3).map((relatedPost) => (
                 <Link 
                   key={relatedPost.id} 
                   href={`/blog/${relatedPost.id}`}

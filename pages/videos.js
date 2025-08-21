@@ -1,36 +1,31 @@
-import { useState, useEffect } from 'react'
-import { supabase } from '../lib/supabase/client'
+import { useEffect } from 'react'
+import useSupabaseSWR from '../lib/supabase/useSupabaseSWR'
 import VideoCard from '../components/VideoCard'
 
 export default function Videos() {
-  const [videos, setVideos] = useState([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    fetchVideos()
-  }, [])
-
-  const fetchVideos = async () => {
-    const { data, error } = await supabase
-      .from('videos')
-      .select('*')
-      .order('created_at', { ascending: false })
-
-    if (error) {
-      console.error('Error fetching videos:', error)
-    } else {
-      setVideos(data || [])
+  const { data: videos = [], error, isLoading } = useSupabaseSWR(
+    'videos',
+    {
+      table: 'videos',
+      order: { column: 'created_at', ascending: false }
     }
-    setLoading(false)
-  }
+  )
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="loading-pulse text-center">
           <div className="preloader"></div>
           <p className="mt-4 text-gray-600">Loading videos...</p>
         </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-red-500">Error loading videos.</div>
       </div>
     )
   }

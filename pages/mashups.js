@@ -1,35 +1,20 @@
-import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { supabase } from '../lib/supabase/client'
+import useSupabaseSWR from '../lib/supabase/useSupabaseSWR'
 import CasketViewerSection from '../CasketViewerSection'
 import BackgroundImage from '../components/BackgroundImage'
 import Head from 'next/head'
+import { useState } from 'react'
 
 export default function Mashups() {
-  const [mashups, setMashups] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [bgLoaded, setBgLoaded] = useState(false)
   const router = useRouter()
-
-  useEffect(() => {
-    // Log when component mounts
-    console.log("[Mashups] Component mounted");
-    fetchMashups()
-  }, [])
-
-  const fetchMashups = async () => {
-    const { data, error } = await supabase
-      .from('mashups')
-      .select('*')
-      .order('created_at', { descending: true }) // Changed to true for oldest to newest order
-
-    if (error) {
-      console.error('Error fetching mashups:', error)
-    } else {
-      setMashups(data || [])
+  const { data: mashups = [], error, isLoading } = useSupabaseSWR(
+    'mashups',
+    {
+      table: 'mashups',
+      order: { column: 'created_at', ascending: false }
     }
-    setLoading(false)
-  }
+  )
+  const [bgLoaded, setBgLoaded] = useState(false)
 
   // Build viewer items (color + image metadata)
   const palette = [
@@ -50,17 +35,24 @@ export default function Mashups() {
 
   // Function to handle background image load
   const handleBgLoad = (success) => {
-    console.log(`[Mashups] Background image ${success ? 'loaded' : 'failed to load'}`);
     setBgLoaded(success);
   }
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="loading-pulse text-center">
           <div className="preloader"></div>
           <p className="mt-4 text-gray-600">Loading mashups...</p>
         </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-red-500">Error loading mashups.</div>
       </div>
     )
   }

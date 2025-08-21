@@ -1,39 +1,31 @@
-import { useState, useEffect, useRef } from 'react'
-import { supabase } from '../lib/supabase/client'
+import { useRef, useState, useEffect } from 'react'
+import useSupabaseSWR from '../lib/supabase/useSupabaseSWR'
 import Head from 'next/head'
 import Link from 'next/link'
 
 export default function Dates() {
-  const [events, setEvents] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
   const [hoveredEvent, setHoveredEvent] = useState(null)
   const [imagePosition, setImagePosition] = useState({ x: 0, y: 0 })
   const observerRef = useRef(null)
   const cursorRef = useRef(null)
   const imageRef = useRef(null)
-
-  // Get window width for responsive styling
   const [windowWidth, setWindowWidth] = useState(0);
-  
+
+  // Fetch events using SWR
+  const { data: events = [], error, isLoading } = useSupabaseSWR(
+    'events',
+    {
+      table: 'events',
+      order: { column: 'date', ascending: true }
+    }
+  )
+
   useEffect(() => {
-    fetchEvents()
     setupScrollAnimations()
     setupMagnetoEffect()
-    
-    // Debug: Check if image loads
-    const img = new Image()
-    img.onload = () => console.log('Background image loaded successfully')
-    img.onerror = () => console.error('Background image failed to load')
-    img.src = '/images/athletic.jpg'
-    
-    // Set initial window width
     setWindowWidth(window.innerWidth);
-    
-    // Update window width on resize
     const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener('resize', handleResize);
-    
     return () => {
       if (observerRef.current) {
         observerRef.current.disconnect()
@@ -41,25 +33,6 @@ export default function Dates() {
       window.removeEventListener('resize', handleResize);
     }
   }, [])
-
-  const fetchEvents = async () => {
-    try {
-      setLoading(true)
-      const { data, error } = await supabase
-        .from('events')
-        .select('*')
-        .order('date', { ascending: true })
-      
-      if (error) throw error
-      
-      setEvents(data || [])
-    } catch (err) {
-      console.error('Error fetching events:', err)
-      setError('Failed to load events. Please try again later.')
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const setupScrollAnimations = () => {
     observerRef.current = new IntersectionObserver(
@@ -86,41 +59,30 @@ export default function Dates() {
     let cursorX = 0
     let cursorY = 0
 
-    // Smooth cursor following
     const animateCursor = () => {
       const speed = 0.15
       cursorX += (mouseX - cursorX) * speed
       cursorY += (mouseY - cursorY) * speed
-      
       cursor.style.transform = `translate(${cursorX}px, ${cursorY}px)`
       requestAnimationFrame(animateCursor)
     }
 
-    // Mouse move handler for magneto effect
     const handleMouseMove = (e) => {
       mouseX = e.clientX
       mouseY = e.clientY
-      
-      // Check if hovering over magneto elements
       const hoveredElement = document.elementFromPoint(e.clientX, e.clientY)
       const magnetoElement = hoveredElement?.closest('.magneto-wrapper')
-      
       if (magnetoElement) {
         cursor.classList.add('cursor-magnify')
-        
         const rect = magnetoElement.getBoundingClientRect()
         const centerX = rect.left + rect.width / 2
         const centerY = rect.top + rect.height / 2
-        
         const deltaX = (e.clientX - centerX) * 0.3
         const deltaY = (e.clientY - centerY) * 0.3
-        
         magnetoElement.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(1.05)`
         magnetoElement.classList.add('magneto-active')
       } else {
         cursor.classList.remove('cursor-magnify')
-        
-        // Reset all magneto elements
         document.querySelectorAll('.magneto-wrapper').forEach(el => {
           el.style.transform = 'translate(0px, 0px) scale(1)'
           el.classList.remove('magneto-active')
@@ -128,7 +90,6 @@ export default function Dates() {
       }
     }
 
-    // Mouse leave handler
     const handleMouseLeave = () => {
       cursor.classList.remove('cursor-magnify')
       document.querySelectorAll('.magneto-wrapper').forEach(el => {
@@ -180,7 +141,6 @@ export default function Dates() {
     }
   }
 
-  // Calculate top padding based on screen size
   const isMobile = windowWidth <= 768;
   const topPadding = isMobile ? '140px' : '110px';
 
@@ -227,8 +187,7 @@ export default function Dates() {
         
         {/* Main Content */}
         <div className="dates-main-content">
-          
-          {loading && (
+          {isLoading && (
             <div className="dates-loading">
               <div className="loading-text">Loading events...</div>
             </div>
@@ -236,11 +195,11 @@ export default function Dates() {
 
           {error && (
             <div className="dates-error">
-              <p>{error}</p>
+              <p>{error.message || error}</p>
             </div>
           )}
 
-          {!loading && !error && (
+          {!isLoading && !error && (
             <div className="events-list">
               {events.map((event, index) => {
                 const dateFormatted = formatDate(event.date)
@@ -280,7 +239,7 @@ export default function Dates() {
                 )
               })}
               
-              {events.length === 0 && !loading && (
+              {events.length === 0 && !isLoading && (
                 <div className="no-events">
                   <p>No upcoming events at the moment.</p>
                 </div>

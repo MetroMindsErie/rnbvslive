@@ -1,37 +1,27 @@
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import useSupabaseSWR from '../../lib/supabase/useSupabaseSWR'
 import Link from 'next/link'
-import { supabase } from '../../lib/supabase/client'
 
 export default function MashupDetail() {
   const router = useRouter()
   const { id } = router.query
-  const [mashup, setMashup] = useState(null)
-  const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    if (!id) return
-    const fetchOne = async () => {
-      const { data, error } = await supabase
-        .from('mashups')
-        .select('*')
-        .eq('id', id)
-        .single()
-      if (error) {
-        console.error('Error fetching mashup:', error)
-      } else {
-        setMashup(data)
-      }
-      setLoading(false)
-    }
-    fetchOne()
-  }, [id])
+  const { data: mashup, error, isLoading } = useSupabaseSWR(
+    id ? ['mashups', id] : null,
+    id
+      ? {
+          table: 'mashups',
+          filter: { column: 'id', value: id },
+          single: true
+        }
+      : {}
+  )
 
-  if (loading) {
+  if (isLoading) {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>
   }
 
-  if (!mashup) {
+  if (error || !mashup) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">

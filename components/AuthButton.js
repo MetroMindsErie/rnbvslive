@@ -1,10 +1,14 @@
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { FiUser, FiLogIn } from 'react-icons/fi';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function AuthButton() {
+    const { user } = useAuth();
     const [showAuthOptions, setShowAuthOptions] = useState(false);
     const containerRef = useRef(null);
+    const router = useRouter();
 
     // Hide menu when clicking outside
     useEffect(() => {
@@ -29,7 +33,11 @@ export default function AuthButton() {
     const handleButtonClick = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        setShowAuthOptions((v) => !v);
+        if (user) {
+            router.push('/dashboard');
+        } else {
+            setShowAuthOptions((v) => !v);
+        }
     };
 
     // Hide menu when login is clicked
@@ -80,7 +88,8 @@ export default function AuthButton() {
                 <FiUser size={24} color="#fff" />
             </button>
 
-            {showAuthOptions && (
+            {/* Only show dropdown for guests */}
+            {!user && showAuthOptions && (
                 <div
                     className="auth-options"
                     style={{

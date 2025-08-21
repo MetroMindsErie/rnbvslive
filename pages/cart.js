@@ -1,40 +1,9 @@
 import { useState, useEffect } from 'react'
+import useSupabaseSWR from '../lib/supabase/useSupabaseSWR'
 import { supabase } from '../lib/supabase/client'
 import CartItem from '../components/CartItem'
 
 export default function Cart() {
-  const [cartItems, setCartItems] = useState([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    fetchCartItems()
-  }, [])
-
-  const fetchCartItems = async () => {
-    const sessionId = getSessionId()
-    const { data, error } = await supabase
-      .from('cart_items')
-      .select(`
-        *,
-        products (
-          id,
-          name,
-          description,
-          price,
-          image_url,
-          stock_quantity
-        )
-      `)
-      .eq('session_id', sessionId)
-
-    if (error) {
-      console.error('Error fetching cart items:', error)
-    } else {
-      setCartItems(data || [])
-    }
-    setLoading(false)
-  }
-
   const getSessionId = () => {
     if (typeof window === 'undefined') return null
     let sessionId = localStorage.getItem('session_id')
@@ -44,6 +13,28 @@ export default function Cart() {
     }
     return sessionId
   }
+
+  const sessionId = typeof window !== 'undefined' ? getSessionId() : null
+  const { data: cartItems = [], error, isLoading, mutate } = useSupabaseSWR(
+    sessionId ? ['cart_items', sessionId] : null,
+    sessionId
+      ? {
+          table: 'cart_items',
+          select: `
+            *,
+            products (
+              id,
+              name,
+              description,
+              price,
+              image_url,
+              stock_quantity
+            )
+          `,
+          filter: { column: 'session_id', value: sessionId }
+        }
+      : {}
+  )
 
   const updateQuantity = async (itemId, newQuantity) => {
     if (newQuantity <= 0) {
@@ -56,7 +47,7 @@ export default function Cart() {
       .update({ quantity: newQuantity })
       .eq('id', itemId)
 
-    fetchCartItems()
+    mutate()
     window.dispatchEvent(new CustomEvent('cartUpdated'))
   }
 
@@ -66,7 +57,7 @@ export default function Cart() {
       .delete()
       .eq('id', itemId)
 
-    fetchCartItems()
+    mutate()
     window.dispatchEvent(new CustomEvent('cartUpdated'))
   }
 
@@ -76,13 +67,21 @@ export default function Cart() {
     }, 0).toFixed(2)
   }
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="loading-pulse text-center">
           <div className="preloader"></div>
           <p className="mt-4 text-gray-600">Loading cart...</p>
         </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-red-500">Error loading cart.</div>
       </div>
     )
   }

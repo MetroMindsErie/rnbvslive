@@ -1,38 +1,33 @@
-import { useState, useEffect } from 'react'
-import { supabase } from '../lib/supabase/client'
+import useSupabaseSWR from '../lib/supabase/useSupabaseSWR'
 import Image from 'next/image'
 import GalleryGrid from '../components/GalleryGrid'
+import { useState } from 'react'
 
 export default function Photos() {
-  const [photos, setPhotos] = useState([])
-  const [loading, setLoading] = useState(true)
   const [selectedPhoto, setSelectedPhoto] = useState(null)
-
-  useEffect(() => {
-    fetchPhotos()
-  }, [])
-
-  const fetchPhotos = async () => {
-    const { data, error } = await supabase
-      .from('photos')
-      .select('*')
-      .order('created_at', { ascending: false })
-
-    if (error) {
-      console.error('Error fetching photos:', error)
-    } else {
-      setPhotos(data || [])
+  const { data: photos = [], error, isLoading } = useSupabaseSWR(
+    'photos',
+    {
+      table: 'photos',
+      order: { column: 'created_at', ascending: false }
     }
-    setLoading(false)
-  }
+  )
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="loading-pulse text-center">
           <div className="preloader"></div>
           <p className="mt-4 text-gray-600">Loading photos...</p>
         </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-red-500">Error loading photos.</div>
       </div>
     )
   }
@@ -88,3 +83,4 @@ export default function Photos() {
     </div>
   )
 }
+
