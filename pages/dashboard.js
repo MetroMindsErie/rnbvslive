@@ -41,7 +41,13 @@ export default function Dashboard() {
       <div style={{ height: '60px', width: '100%' }}></div>
       <main className="max-w-5xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
         {/* --- Blog Section (public for all) --- */}
-        <RnbBlog />
+        <div className="mb-8">
+          <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900">
+            <div className="flex space-x-6 min-w-[900px] lg:min-w-0 lg:max-w-full" style={{ maxWidth: '100%' }}>
+              <RnbBlog dashboardMode={true} />
+            </div>
+          </div>
+        </div>
 
         {/* If not logged in, show guest dashboard */}
         {!user && (
@@ -65,8 +71,17 @@ export default function Dashboard() {
               <div className="bg-[#23272f] rounded-xl shadow-lg p-6">
                 <div className="flex flex-col sm:flex-row items-center justify-between">
                   <div className="flex items-center">
-                    <div className="h-12 w-12 bg-blue-600 rounded-full flex items-center justify-center text-xl font-bold mr-4">
-                      {profile?.full_name?.charAt(0) || user?.email?.charAt(0) || 'U'}
+                    <div className="h-12 w-12 rounded-full flex items-center justify-center text-xl font-bold mr-4 bg-blue-600 overflow-hidden">
+                      {profile?.avatar_url ? (
+                        <img
+                          src={profile.avatar_url}
+                          alt="Profile"
+                          className="h-12 w-12 object-cover rounded-full"
+                          referrerPolicy="no-referrer"
+                        />
+                      ) : (
+                        profile?.full_name?.charAt(0) || user?.email?.charAt(0) || 'U'
+                      )}
                     </div>
                     <div>
                       <h2 className="text-2xl font-semibold text-white mb-1">

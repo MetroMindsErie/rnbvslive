@@ -1,6 +1,6 @@
 // contexts/AuthContext.js
 import { createContext, useContext, useEffect, useState } from 'react'
-import { supabase, getCurrentUser, getProfile } from '../lib/supabase/client'
+import { supabase, getCurrentUser, getProfile, updateAvatarUrlFromOAuth } from '../lib/supabase/client'
 import { useRouter } from 'next/router'
 
 const AuthContext = createContext()
@@ -66,6 +66,13 @@ export const AuthProvider = ({ children }) => {
 
     return () => subscription.unsubscribe()
   }, [router])
+
+  useEffect(() => {
+    if (user) {
+      // Update avatar_url in the database if available from Google OAuth
+      updateAvatarUrlFromOAuth()
+    }
+  }, [user])
 
   const loadProfile = async (userId) => {
     try {

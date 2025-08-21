@@ -30,11 +30,10 @@ export default function Profile() {
         phone_number: profile.phone_number || '',
         bio: profile.bio || ''
       })
-      
-      // If profile is already complete, redirect to dashboard
-      if (profile.has_profile) {
-        router.push('/dashboard')
-      }
+      // Remove this block to allow editing even if profile is complete:
+      // if (profile.has_profile) {
+      //   router.push('/dashboard')
+      // }
     }
   }, [profile, router])
 
@@ -54,6 +53,7 @@ export default function Profile() {
     try {
       if (!formData.full_name.trim()) {
         setError('Full name is required')
+        setSaving(false) // <-- Add this line so button is re-enabled on validation error
         return
       }
 
@@ -63,8 +63,7 @@ export default function Profile() {
     } catch (error) {
       console.error('Error updating profile:', error)
       setError('Failed to update profile. Please try again.')
-    } finally {
-      setSaving(false)
+      setSaving(false) // <-- Keep this here for error case
     }
   }
 
@@ -74,32 +73,43 @@ export default function Profile() {
 
   if (loading || !user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-[#1a1a1a]">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#1a1a1a] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-blue-100">
-          <svg className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        {/* Show avatar if available */}
+        {profile?.avatar_url && (
+          <div className="flex justify-center mb-4">
+            <img
+              src={profile.avatar_url}
+              alt="Profile"
+              className="h-20 w-20 rounded-full object-cover border-4 border-blue-700 shadow"
+              referrerPolicy="no-referrer"
+            />
+          </div>
+        )}
+        <div className="mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-blue-900">
+          <svg className="h-6 w-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
           </svg>
         </div>
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
           Complete Your Profile
         </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
+        <p className="mt-2 text-center text-sm text-gray-400">
           Help us personalize your experience
         </p>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+        <div className="bg-[#23272f] py-8 px-4 shadow sm:rounded-lg sm:px-10">
           {error && (
-            <div className="mb-4 rounded-md bg-red-50 p-4">
+            <div className="mb-4 rounded-md bg-red-900/20 p-4">
               <div className="flex">
                 <div className="flex-shrink-0">
                   <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
@@ -107,7 +117,7 @@ export default function Profile() {
                   </svg>
                 </div>
                 <div className="ml-3">
-                  <p className="text-sm text-red-800">{error}</p>
+                  <p className="text-sm text-red-300">{error}</p>
                 </div>
               </div>
             </div>
@@ -115,7 +125,7 @@ export default function Profile() {
 
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-300">
                 Email
               </label>
               <div className="mt-1">
@@ -125,13 +135,13 @@ export default function Profile() {
                   type="email"
                   value={user?.email || ''}
                   disabled
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 bg-gray-100 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="appearance-none block w-full px-3 py-2 border border-gray-700 rounded-md placeholder-gray-500 bg-[#18181c] text-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="full_name" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="full_name" className="block text-sm font-medium text-gray-300">
                 Full Name *
               </label>
               <div className="mt-1">
@@ -142,14 +152,14 @@ export default function Profile() {
                   required
                   value={formData.full_name}
                   onChange={handleChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="appearance-none block w-full px-3 py-2 border border-gray-700 rounded-md placeholder-gray-500 bg-[#18181c] text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   placeholder="Enter your full name"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="phone_number" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="phone_number" className="block text-sm font-medium text-gray-300">
                 Phone Number
               </label>
               <div className="mt-1">
@@ -159,14 +169,14 @@ export default function Profile() {
                   type="tel"
                   value={formData.phone_number}
                   onChange={handleChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="appearance-none block w-full px-3 py-2 border border-gray-700 rounded-md placeholder-gray-500 bg-[#18181c] text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   placeholder="Enter your phone number"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="bio" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="bio" className="block text-sm font-medium text-gray-300">
                 Bio
               </label>
               <div className="mt-1">
@@ -176,7 +186,7 @@ export default function Profile() {
                   rows={3}
                   value={formData.bio}
                   onChange={handleChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="appearance-none block w-full px-3 py-2 border border-gray-700 rounded-md placeholder-gray-500 bg-[#18181c] text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   placeholder="Tell us a bit about yourself"
                 />
               </div>
@@ -194,7 +204,7 @@ export default function Profile() {
               <button
                 type="button"
                 onClick={handleSkip}
-                className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                className="w-full flex justify-center py-2 px-4 border border-gray-700 rounded-md shadow-sm text-sm font-medium text-gray-300 bg-[#23272f] hover:bg-[#18181c] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
                 Skip for now
               </button>

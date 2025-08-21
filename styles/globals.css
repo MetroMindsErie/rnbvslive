@@ -1290,6 +1290,23 @@ html, body {
     @apply from-[#00153F] to-blue-600;
   }
 
+  /* Custom scrollbar for dashboard blog section */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #2563eb #18181c; /* blue-600 thumb, dark bg track */
+  }
+  .custom-scrollbar::-webkit-scrollbar {
+    height: 10px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg, #2563eb 0%, #1e40af 100%);
+    border-radius: 8px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: #18181c;
+    border-radius: 8px;
+  }
+
   /* Accessibility focus states */
   button:focus,
   input:focus,
