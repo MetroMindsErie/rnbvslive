@@ -19,44 +19,44 @@ const PaymentGateway = ({
   });
 
   // Payment methods configuration - using image files instead of SVGs
-  const paymentMethods = [
+const paymentMethods = [
     {
-      id: 'applepay',
-      name: 'Apple Pay',
-      icon: <img src="/images/payment-icons/apple-pay.png" alt="Apple Pay" className="h-14 w-auto object-contain" />,
-      available: typeof window !== 'undefined' && window.ApplePaySession
+        id: 'applepay',
+        name: 'Apple Pay',
+        icon: <img src="/images/payment-icons/ap.jpeg" alt="Apple Pay" className="h-14 w-auto object-contain rounded-lg" />,
+        available: true // Always show Apple Pay option regardless of browser support
     },
     {
-      id: 'venmo',
-      name: 'Venmo',
-      icon: <img src="/images/payment-icons/venmo.png" alt="Venmo" className="h-14 w-auto object-contain" />,
-      available: true
+        id: 'venmo',
+        name: 'Venmo',
+        icon: <img src="/images/payment-icons/venmo.png" alt="Venmo" className="h-14 w-auto object-contain rounded-lg" />,
+        available: true
     },
     {
-      id: 'square',
-      name: 'Square',
-      icon: <img src="/images/payment-icons/caa.png" alt="Square" className="h-14 w-auto object-contain" />,
-      available: true
+        id: 'square',
+        name: 'Square',
+        icon: <img src="/images/payment-icons/caa.png" alt="Square" className="h-14 w-auto object-contain rounded-lg" />,
+        available: true
     },
     {
-      id: 'card',
-      name: 'Credit Card',
-      icon: <img src="/images/payment-icons/cc.jpg" alt="Credit Card" className="h-14 w-auto object-contain" />,
-      available: true
+        id: 'card',
+        name: 'Credit Card',
+        icon: <img src="/images/payment-icons/cc.jpg" alt="Credit Card" className="h-14 w-auto object-contain rounded-lg" />,
+        available: true
     },
     {
-      id: 'paypal',
-      name: 'PayPal',
-      icon: <img src="/images/payment-icons/paypal.png" alt="PayPal" className="h-14 w-auto object-contain" />,
-      available: true
+        id: 'paypal',
+        name: 'PayPal',
+        icon: <img src="/images/payment-icons/paypal.png" alt="PayPal" className="h-14 w-auto object-contain rounded-lg" />,
+        available: true
     },
     {
-      id: 'googlepay',
-      name: 'Google Pay',
-      icon: <img src="/images/payment-icons/google-pay.png" alt="Google Pay" className="h-14 w-auto object-contain" />,
-      available: true
+        id: 'googlepay',
+        name: 'Google Pay',
+        icon: <img src="/images/payment-icons/google-pay.png" alt="Google Pay" className="h-14 w-auto object-contain rounded-lg" />,
+        available: true
     }
-  ];
+];
 
   // Simulate payment processing
   const processPayment = async (method) => {
