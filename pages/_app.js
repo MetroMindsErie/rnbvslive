@@ -10,6 +10,7 @@ import Footer from '../components/Footer'
 import FollowButton from '../components/FollowButton'
 import { useState, useEffect } from 'react'
 import { AuthProvider } from '../contexts/AuthContext'
+import { MusicPlayerProvider } from '../contexts/MusicPlayerContext'
 
 // Simple error boundary component
 function ErrorBoundary({ children }) {
@@ -75,17 +76,19 @@ export default function App({ Component, pageProps }) {
 
   return (
     <AuthProvider>
-      <Layout>
-        <ErrorBoundary>
-          <CursorEffect />
-          {!isHomePage && <Navbar />}
-          <div id="page-content" className="page-wrapper">
-            <Component {...pageProps} isMobile={isMobile} />
-          </div>
+      <MusicPlayerProvider>
+        <Layout>
+          <ErrorBoundary>
+            <CursorEffect />
+            {!isHomePage && <Navbar />}
+            <div id="page-content" className="page-wrapper">
+              <Component {...pageProps} isMobile={isMobile} />
+            </div>
 
-          <FollowButton /> {/* Added to all pages */}
-        </ErrorBoundary>
-      </Layout>
+            <FollowButton /> {/* Added to all pages */}
+          </ErrorBoundary>
+        </Layout>
+      </MusicPlayerProvider>
     </AuthProvider>
 
   )

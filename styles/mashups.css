@@ -1,5 +1,9 @@
 /* Mashups page specific styles */
 
+/* Import Roboto and Red Hat Display fonts */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;700;900&display=swap');
+
 /* Main container for mashups page */
 .mashups-page {
   position: relative;
@@ -7,6 +11,7 @@
   background-color: #000;
   color: #fff;
   overflow-x: hidden;
+  font-family: 'Roboto', sans-serif;
 }
 
 /* Background image container styles */
@@ -60,4 +65,518 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+/* Mashup Detail Page & Media Player Styles */
+.mashup-detail-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto; /* Allow scrolling within this container */
+  padding-bottom: 120px; /* Ensure content doesn't get cut off */
+}
+.mashup-detail-overlay {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(180deg,rgba(0,0,0,0.7) 0%,rgba(0,0,0,0.9) 100%);
+  z-index: 1;
+}
+.mashup-detail-content {
+  position: relative;
+  z-index: 2;
+  min-height: calc(100vh - 200px); /* Account for footer space */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 3rem;
+  padding: 80px 2vw 180px 2vw; /* Increased bottom padding significantly */
+  margin-bottom: 80px; /* Increased margin at bottom */
+}
+.mashup-album-art {
+  flex-shrink: 0;
+  width: 420px;
+  max-width: 90vw;
+  box-shadow: 0 8px 32px 0 rgba(0,0,0,0.45);
+  border-radius: 24px;
+  overflow: hidden;
+}
+.album-art-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 24px;
+}
+.mashup-main-info {
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2rem;
+}
+.mashup-title {
+  font-family: 'Red Hat Display', sans-serif;
+  font-size: 3.5rem;
+  font-weight: 900;
+  color: #fff;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(90deg, #fff 0%, rgba(255,255,255,0.8) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+}
+.mashup-subtitle {
+  font-family: 'Roboto', sans-serif;
+  font-size: 1.25rem;
+  color: #e0e0e0;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  margin-top: 0.5rem;
+}
+.mashup-socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.mashup-social-btn {
+  display: flex;
+  align-items: center;
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+  border-radius: 12px;
+  padding: 0.75rem 1.5rem;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+.mashup-social-btn:hover {
+  background: rgba(255,255,255,0.18);
+}
+.mashup-player-section {
+  width: 100%;
+  max-width: 600px;
+}
+/* Media Player Styles */
+.media-player-container {
+  background: rgba(10, 10, 10, 0.85);
+  border-radius: 24px;
+  box-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.5);
+  padding: 2.5rem 2rem 2.5rem 2rem;
+  width: 100%;
+  margin-bottom: 70px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(15px);
+  position: relative;
+  z-index: 5;
+  transition: all 0.3s ease;
+}
+.player-ui {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.tracklist {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 20px;
+  max-height: 260px; /* Slightly taller to match screenshot */
+  overflow-y: auto;
+  padding-right: 14px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.05);
+}
+.tracklist::-webkit-scrollbar {
+  width: 5px;
+}
+
+.tracklist::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+
+.tracklist::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #06b6d4, #8b5cf6);
+  border-radius: 10px;
+}
+
+.tracklist::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #06b6d4, #f97316);
+}
+.track-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 16px 20px;
+  border-radius: 16px;
+  cursor: pointer;
+  background: rgba(20, 20, 20, 0.4);
+  transition: all 0.3s ease;
+  margin-bottom: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.track-row:hover {
+  background: rgba(40, 40, 40, 0.6);
+  transform: translateY(-3px);
+  border-color: rgba(255,255,255,0.1);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.track-row.active {
+  background: rgba(60, 60, 60, 0.5);
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 20px rgba(107, 99, 246, 0.2);
+}
+
+/* Play button inside each track row */
+.track-row-play-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+}
+
+/* Custom styles for smooth scrolling */
+.mashup-detail-bg {
+  scroll-behavior: smooth;
+  scroll-snap-type: y mandatory;
+  overflow-y: auto;
+  height: 100vh;
+  padding-bottom: 180px; /* Increase bottom padding for navigation */
+}
+
+/* Navigation Buttons Styling - to match the screenshot */
+.mashup-navigation {
+  position: fixed;
+  bottom: 60px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 10%;
+  max-width: 1400px;
+  margin: 0 auto;
+  z-index: 10;
+}
+
+.nav-button {
+  display: flex;
+  align-items: center;
+  background: rgba(15, 15, 15, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  color: white;
+  border-radius: 10px;
+  padding: 12px 24px;
+  font-family: 'Red Hat Display', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  max-width: 300px;
+}
+
+.nav-button:hover:not(.disabled) {
+  background: rgba(30, 30, 30, 0.8);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.nav-button.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.nav-icon {
+  font-size: 1.5rem;
+  margin: 0 10px;
+  transition: transform 0.3s ease;
+}
+
+.prev-button:hover:not(.disabled) .nav-icon {
+  transform: translateX(-5px);
+}
+
+.next-button:hover:not(.disabled) .nav-icon {
+  transform: translateX(5px);
+}
+
+.nav-text {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.next-button .nav-text {
+  text-align: right;
+}
+
+.nav-direction {
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 2px;
+}
+
+.nav-title {
+  font-size: 0.9rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  .mashup-detail-content {
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    padding: 80px 5% 200px; /* Significantly increased bottom padding */
+    min-height: auto; /* Allow natural height on mobile */
+  }
+  
+  .mashup-album-art {
+    width: 90%;
+    max-width: 400px;
+    margin-top: 40px; /* Add space at top */
+  }
+  
+  .mashup-main-info {
+    width: 90%;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .mashup-title {
+    font-size: 2.5rem; /* Slightly larger on mobile for better readability */
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  
+  .mashup-footer-space {
+    height: 180px;
+  }
+  
+  .mashup-social-links {
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+  
+  .social-link {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    flex-basis: calc(50% - 10px);
+    margin-right: 5px;
+    margin-left: 5px;
+    justify-content: center;
+    margin-bottom: 10px;
+  }
+  
+  /* Improve track row spacing */
+  .track-row {
+    margin-bottom: 12px;
+    padding: 14px 16px;
+  }
+  
+  /* Ensure player buttons are easy to tap */
+  .track-row-play-btn {
+    width: 44px;
+    height: 44px;
+    min-width: 44px; /* Ensure minimum tap target size */
+  }
+}
+
+/* Enhanced small mobile adjustments */
+@media (max-width: 600px) {
+  .mashup-detail-bg {
+    padding-top: 60px; /* Ensure content doesn't hide under nav */
+    padding-bottom: 200px; /* Extra space at bottom */
+  }
+  
+  .mashup-title {
+    font-size: 2rem;
+    line-height: 1.2;
+    padding: 0 10px;
+  }
+  
+  .mashup-detail-content {
+    padding: 20px 5% 220px; /* Adjust top and increase bottom padding */
+    gap: 1.5rem;
+  }
+  
+  .mashup-album-art {
+    width: 90%;
+    max-width: 300px;
+    margin-top: 20px;
+  }
+  
+  .social-link {
+    flex-basis: 100%; /* Full width on very small screens */
+    margin: 0 0 10px 0;
+  }
+  
+  .tracklist {
+    max-height: 220px; /* Slightly shorter on mobile */
+  }
+  
+  .track-row {
+    padding: 12px 14px;
+  }
+  
+  .track-title {
+    font-size: 0.95rem;
+  }
+  
+  .track-artist {
+    font-size: 0.8rem;
+  }
+  
+  .row-time {
+    font-size: 0.75rem;
+  }
+  
+  .mashup-footer-space {
+    height: 200px;
+  }
+  
+  /* Force scrollable container */
+  .mashup-detail-bg {
+    -webkit-overflow-scrolling: touch; /* Improve scroll on iOS */
+  }
+}
+
+/* Fix for iPhone X and other notched devices */
+@media (max-width: 450px) and (min-height: 800px) {
+  .mashup-detail-bg {
+    padding-bottom: 250px; /* Extra padding for notched devices */
+  }
+  
+  .mashup-footer-space {
+    height: 250px;
+  }
+}
+  
+  .mashup-footer-space {
+    height: 180px;
+  }
+  
+  .mashup-social-links {
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+  
+  .social-link {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    flex-basis: calc(50% - 10px);
+    margin-right: 5px;
+    margin-left: 5px;
+    justify-content: center;
+    margin-bottom: 10px;
+  }
+  
+  /* Improve track row spacing */
+  .track-row {
+    margin-bottom: 12px;
+    padding: 14px 16px;
+  }
+  
+  /* Ensure player buttons are easy to tap */
+  .track-row-play-btn {
+    width: 44px;
+    height: 44px;
+    min-width: 44px; /* Ensure minimum tap target size */
+  }
+
+/* Enhanced small mobile adjustments */
+@media (max-width: 600px) {
+  .mashup-detail-bg {
+    padding-top: 60px; /* Ensure content doesn't hide under nav */
+    padding-bottom: 200px; /* Extra space at bottom */
+  }
+  
+  .mashup-title {
+    font-size: 2rem;
+    line-height: 1.2;
+    padding: 0 10px;
+  }
+  
+  .mashup-detail-content {
+    padding: 20px 5% 220px; /* Adjust top and increase bottom padding */
+    gap: 1.5rem;
+  }
+  
+  .mashup-album-art {
+    width: 90%;
+    max-width: 300px;
+    margin-top: 20px;
+  }
+  
+  .social-link {
+    flex-basis: 100%; /* Full width on very small screens */
+    margin: 0 0 10px 0;
+  }
+  
+  .tracklist {
+    max-height: 220px; /* Slightly shorter on mobile */
+  }
+  
+  .track-row {
+    padding: 12px 14px;
+  }
+  
+  .track-title {
+    font-size: 0.95rem;
+  }
+  
+  .track-artist {
+    font-size: 0.8rem;
+  }
+  
+  .row-time {
+    font-size: 0.75rem;
+  }
+  
+  .mashup-footer-space {
+    height: 200px;
+  }
+  
+  /* Force scrollable container */
+  .mashup-detail-bg {
+    -webkit-overflow-scrolling: touch; /* Improve scroll on iOS */
+  }
+}
+
+/* Fix for iPhone X and other notched devices */
+@media (max-width: 450px) and (min-height: 800px) {
+  .mashup-detail-bg {
+    padding-bottom: 250px; /* Extra padding for notched devices */
+  }
+  
+  .mashup-footer-space {
+    height: 250px;
+  }
 }

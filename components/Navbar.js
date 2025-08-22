@@ -2,7 +2,8 @@ import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { supabase } from '../lib/supabase/client'
-import AuthButton from './AuthButton' // <-- Add this import
+import AuthButton from './AuthButton'
+import MusicPlayerButton from './MusicPlayerButton' // <-- Add this import
 
 export default function Navbar({ isMobile }) {
   const [cartCount, setCartCount] = useState(0)
@@ -148,6 +149,9 @@ export default function Navbar({ isMobile }) {
                 </svg>
                 {cartCount > 0 && <span className="cart-count-badge">{cartCount}</span>}
               </Link>
+
+              {/* Music Player Button */}
+              <MusicPlayerButton />
 
               {/* Auth Button - always show on desktop, show on mobile if you want */}
               <AuthButton />
