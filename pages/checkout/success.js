@@ -8,7 +8,7 @@ import { getTicketsForPurchase } from '../../lib/ticketService';
 
 export default function CheckoutSuccess() {
     const router = useRouter();
-    const { purchaseId } = router.query;
+    const { purchaseId, paymentMethod } = router.query;
     const [purchaseData, setPurchaseData] = useState(null);
     const [eventData, setEventData] = useState(null);
     const [tickets, setTickets] = useState([]);
@@ -85,6 +85,26 @@ export default function CheckoutSuccess() {
         }
     };
     
+    // Helper function to get a payment method icon
+    const getPaymentMethodIcon = (method) => {
+        switch(method) {
+            case 'square':
+                return <span>💳 Credit Card</span>;
+            case 'paypal':
+                return <span>📱 PayPal</span>;
+            case 'applepay':
+                return <span>🍎 Apple Pay</span>;
+            case 'googlepay':
+                return <span>📱 Google Pay</span>;
+            case 'venmo':
+                return <span>📱 Venmo</span>;
+            case 'amazonpay':
+                return <span>📦 Amazon Pay</span>;
+            default:
+                return <span>💳 Payment</span>;
+        }
+    };
+    
     if (loading) {
         return <div className="p-10 text-center">Loading order details...</div>;
     }
@@ -118,7 +138,7 @@ export default function CheckoutSuccess() {
                             </div>
                             <h1 className="text-2xl font-bold">Order Confirmed!</h1>
                             <p className="text-gray-400 mt-1">Thank you for your purchase</p>
-                            <p className="text-sm mt-2">A confirmation email with your tickets has been sent to {purchaseData.customer_email}</p>
+                            <p className="text-sm mt-2">A confirmation email with your tickets has been sent to {purchaseData?.customer_email}</p>
                         </div>
                         
                         <div className="bg-[#202020] p-4 rounded-lg mb-6">
@@ -136,19 +156,22 @@ export default function CheckoutSuccess() {
                                 <div className="font-mono">{purchaseId}</div>
                                 
                                 <div>Date:</div>
-                                <div>{new Date(purchaseData.purchase_date).toLocaleDateString()}</div>
+                                <div>{purchaseData && new Date(purchaseData.purchase_date).toLocaleDateString()}</div>
                                 
                                 <div>Name:</div>
-                                <div>{purchaseData.customer_name}</div>
+                                <div>{purchaseData?.customer_name}</div>
                                 
                                 <div>Email:</div>
-                                <div>{purchaseData.customer_email}</div>
+                                <div>{purchaseData?.customer_email}</div>
                                 
                                 <div>Tickets:</div>
-                                <div>{purchaseData.ticket_quantity}</div>
+                                <div>{purchaseData?.ticket_quantity}</div>
+                                
+                                <div>Payment Method:</div>
+                                <div>{paymentMethod && getPaymentMethodIcon(paymentMethod)}</div>
                                 
                                 <div>Total Paid:</div>
-                                <div>${purchaseData.total_amount.toFixed(2)}</div>
+                                <div>${purchaseData?.total_amount.toFixed(2)}</div>
                             </div>
                         </div>
                         

@@ -7,6 +7,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { getPublicQRUrl } from '../../utils/qrGenerator';
 import { v4 as uuidv4 } from 'uuid';
+import PaymentGateway from '../../components/PaymentGateway';
 
 export default function Checkout() {
     const router = useRouter();
@@ -18,10 +19,6 @@ export default function Checkout() {
         email: '',
         phoneNumber: '',
         ticketQuantity: 1,
-        paymentMethod: 'credit_card',
-        cardNumber: '',
-        cardExpiry: '',
-        cardCVC: '',
     });
     
     const [processingPayment, setProcessingPayment] = useState(false);
@@ -80,24 +77,24 @@ export default function Checkout() {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
     
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const calculateTotal = (quantity) => {
+        // Simple ticket price calculation
+        const basePrice = 45.00;
+        const serviceFee = 5.00;
+        return (basePrice + serviceFee) * quantity;
+    };
+    
+    const handlePaymentSuccess = async (paymentData) => {
         setProcessingPayment(true);
-        setErrorMessage('');
-        
         try {
-            // In a real application, you would integrate with a payment processor here
-            // For demonstration, we'll simulate a successful payment
-            
-            // 1. Process payment (simulated)
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            
-            // 2. Create ticket purchase with the new service
+            // Create ticket purchase with the ticket service
             const purchaseData = {
                 fullName: formData.fullName,
                 email: formData.email,
                 phoneNumber: formData.phoneNumber,
-                totalAmount: calculateTotal(formData.ticketQuantity)
+                totalAmount: calculateTotal(formData.ticketQuantity),
+                paymentMethod: paymentData.method,
+                transactionId: paymentData.transactionId
             };
             
             const { purchase, tickets } = await createTicketPurchase(
@@ -106,7 +103,7 @@ export default function Checkout() {
                 formData.ticketQuantity
             );
             
-            // 3. Send confirmation email with QR code
+            // Send confirmation email with QR code
             await sendConfirmationEmail(
                 formData.email,
                 formData.fullName,
@@ -115,22 +112,19 @@ export default function Checkout() {
                 tickets
             );
             
-            // 4. Redirect to success page
-            router.push(`/checkout/success?purchaseId=${purchase.id}`);
+            // Redirect to success page
+            router.push(`/checkout/success?purchaseId=${purchase.id}&paymentMethod=${paymentData.method}`);
             
         } catch (err) {
-            console.error('Payment processing error:', err);
-            setErrorMessage('There was an error processing your payment. Please try again.');
+            console.error('Error creating tickets:', err);
+            setErrorMessage('Payment successful, but there was an error creating your tickets. Please contact support.');
         } finally {
             setProcessingPayment(false);
         }
     };
     
-    const calculateTotal = (quantity) => {
-        // Simple ticket price calculation
-        const basePrice = 45.00;
-        const serviceFee = 5.00;
-        return (basePrice + serviceFee) * quantity;
+    const handlePaymentError = (error) => {
+        setErrorMessage(`Payment failed: ${error.error}`);
     };
     
     const sendConfirmationEmail = async (email, name, eventTitle, eventDate, tickets) => {
@@ -258,115 +252,71 @@ export default function Checkout() {
                                 </div>
                             )}
                             
-                            <form onSubmit={handleSubmit} className="mb-6">
-                                <div className="mb-6">
-                                    <h3 className="text-lg font-semibold mb-3">Contact Information</h3>
-                                    
-                                    <div className="mb-4">
-                                        <label className="block mb-1">Full Name</label>
-                                        <input 
-                                            type="text"
-                                            name="fullName"
-                                            value={formData.fullName}
-                                            onChange={handleInputChange}
-                                            required
-                                            className="w-full p-2 bg-[#333] rounded"
-                                        />
-                                    </div>
-                                    
-                                    <div className="mb-4">
-                                        <label className="block mb-1">Email</label>
-                                        <input 
-                                            type="email"
-                                            name="email"
-                                            value={formData.email}
-                                            onChange={handleInputChange}
-                                            required
-                                            className="w-full p-2 bg-[#333] rounded"
-                                        />
-                                    </div>
-                                    
-                                    <div className="mb-4">
-                                        <label className="block mb-1">Phone Number</label>
-                                        <input 
-                                            type="tel"
-                                            name="phoneNumber"
-                                            value={formData.phoneNumber}
-                                            onChange={handleInputChange}
-                                            required
-                                            className="w-full p-2 bg-[#333] rounded"
-                                        />
-                                    </div>
-                                    
-                                    <div className="mb-4">
-                                        <label className="block mb-1">Ticket Quantity</label>
-                                        <select
-                                            name="ticketQuantity"
-                                            value={formData.ticketQuantity}
-                                            onChange={handleInputChange}
-                                            className="w-full p-2 bg-[#333] rounded"
-                                        >
-                                            {[1, 2, 3, 4, 5, 6, 7, 8].map(num => (
-                                                <option key={num} value={num}>{num}</option>
-                                            ))}
-                                        </select>
-                                    </div>
+                            <div className="mb-6">
+                                <h3 className="text-lg font-semibold mb-3">Contact Information</h3>
+                                
+                                <div className="mb-4">
+                                    <label className="block mb-1">Full Name</label>
+                                    <input 
+                                        type="text"
+                                        name="fullName"
+                                        value={formData.fullName}
+                                        onChange={handleInputChange}
+                                        required
+                                        className="w-full p-2 bg-[#333] rounded"
+                                    />
                                 </div>
                                 
-                                <div className="mb-6">
-                                    <h3 className="text-lg font-semibold mb-3">Payment Information</h3>
-                                    
-                                    <div className="mb-4">
-                                        <label className="block mb-1">Card Number</label>
-                                        <input 
-                                            type="text"
-                                            name="cardNumber"
-                                            value={formData.cardNumber}
-                                            onChange={handleInputChange}
-                                            required
-                                            placeholder="1234 5678 9012 3456"
-                                            className="w-full p-2 bg-[#333] rounded"
-                                        />
-                                    </div>
-                                    
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="mb-4">
-                                            <label className="block mb-1">Expiration Date</label>
-                                            <input 
-                                                type="text"
-                                                name="cardExpiry"
-                                                value={formData.cardExpiry}
-                                                onChange={handleInputChange}
-                                                required
-                                                placeholder="MM/YY"
-                                                className="w-full p-2 bg-[#333] rounded"
-                                            />
-                                        </div>
-                                        <div className="mb-4">
-                                            <label className="block mb-1">CVC</label>
-                                            <input 
-                                                type="text"
-                                                name="cardCVC"
-                                                value={formData.cardCVC}
-                                                onChange={handleInputChange}
-                                                required
-                                                placeholder="123"
-                                                className="w-full p-2 bg-[#333] rounded"
-                                            />
-                                        </div>
-                                    </div>
+                                <div className="mb-4">
+                                    <label className="block mb-1">Email</label>
+                                    <input 
+                                        type="email"
+                                        name="email"
+                                        value={formData.email}
+                                        onChange={handleInputChange}
+                                        required
+                                        className="w-full p-2 bg-[#333] rounded"
+                                    />
                                 </div>
                                 
-                                <button 
-                                    type="submit" 
-                                    className="w-full py-3 bg-[#e91e63] hover:bg-[#d81b60] text-white font-bold rounded mb-8"
-                                    disabled={processingPayment}
-                                >
-                                    {processingPayment ? 'Processing...' : `Pay $${calculateTotal(formData.ticketQuantity).toFixed(2)}`}
-                                </button>
-                            </form>
+                                <div className="mb-4">
+                                    <label className="block mb-1">Phone Number</label>
+                                    <input 
+                                        type="tel"
+                                        name="phoneNumber"
+                                        value={formData.phoneNumber}
+                                        onChange={handleInputChange}
+                                        required
+                                        className="w-full p-2 bg-[#333] rounded"
+                                    />
+                                </div>
+                                
+                                <div className="mb-4">
+                                    <label className="block mb-1">Ticket Quantity</label>
+                                    <select
+                                        name="ticketQuantity"
+                                        value={formData.ticketQuantity}
+                                        onChange={handleInputChange}
+                                        className="w-full p-2 bg-[#333] rounded"
+                                    >
+                                        {[1, 2, 3, 4, 5, 6, 7, 8].map(num => (
+                                            <option key={num} value={num}>{num}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
                             
-                            {/* Add spacing div to create more separation from footer */}
+                            <div className="mb-6">
+                                <h3 className="text-lg font-semibold mb-3">Payment Information</h3>
+                                
+                                <PaymentGateway 
+                                    amount={calculateTotal(formData.ticketQuantity)}
+                                    currency="USD"
+                                    onPaymentSuccess={handlePaymentSuccess}
+                                    onPaymentError={handlePaymentError}
+                                />
+                            </div>
+                            
                             <div className="h-12 md:h-16"></div>
                         </div>
                     </div>

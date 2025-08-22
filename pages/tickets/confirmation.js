@@ -14,8 +14,8 @@ export default function TicketConfirmationPage() {
     session_id
       ? {
           table: 'tickets',
-          select: '*, events(*)',
           filter: { column: 'order_id', value: session_id }
+          // Remove select parameter to troubleshoot
         }
       : {}
   );

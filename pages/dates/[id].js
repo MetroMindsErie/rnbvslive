@@ -15,6 +15,7 @@ export default function EventDetail() {
                 table: 'events',
                 filter: { column: 'id', value: id },
                 single: true
+                // Remove select parameter to simplify
             }
             : {}
     )

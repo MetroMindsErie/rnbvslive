@@ -11,14 +11,19 @@ export default function Dates() {
   const imageRef = useRef(null)
   const [windowWidth, setWindowWidth] = useState(0);
 
-  // Fetch events using SWR
+  // Fetch events using SWR - simplify to avoid potential SQL errors
   const { data: events = [], error, isLoading } = useSupabaseSWR(
     'events',
     {
-      table: 'events',
-      order: { column: 'date', ascending: true }
+      table: 'events'
+      // Remove all other parameters to troubleshoot the issue
     }
   )
+
+  // Ensure events are sorted by date ascending on the client in case backend ordering fails
+  const sortedEvents = Array.isArray(events)
+    ? [...events].sort((a, b) => new Date(a.date) - new Date(b.date))
+    : []
 
   useEffect(() => {
     setupScrollAnimations()
@@ -199,55 +204,51 @@ export default function Dates() {
             </div>
           )}
 
-          {!isLoading && !error && (
-            <div className="events-list">
-              {events.map((event, index) => {
-                const dateFormatted = formatDate(event.date)
-                return (
-                  <Link 
-                    href={`/dates/${event.id}`} 
-                    key={event.id}
-                    className="event-item-link"
+          {sortedEvents && sortedEvents.length > 0 ? (
+            sortedEvents.map((event, index) => {
+              const dateFormatted = formatDate(event.date)
+              return (
+                <Link 
+                  href={`/dates/${event.id}`} 
+                  key={event.id}
+                  className="event-item-link"
+                >
+                  <div
+                    className="event-item magneto-wrapper"
+                    ref={(el) => {
+                      if (el && observerRef.current) {
+                        observerRef.current.observe(el)
+                      }
+                    }}
+                    style={{ animationDelay: `${index * 0.1}s` }}
+                    onMouseEnter={(e) => handleEventHover(event, e)}
+                    onMouseLeave={handleEventLeave}
+                    onMouseMove={(e) => handleMouseMove(event, e)}
                   >
-                    <div
-                      className="event-item magneto-wrapper"
-                      ref={(el) => {
-                        if (el && observerRef.current) {
-                          observerRef.current.observe(el)
-                        }
-                      }}
-                      style={{ animationDelay: `${index * 0.1}s` }}
-                      onMouseEnter={(e) => handleEventHover(event, e)}
-                      onMouseLeave={handleEventLeave}
-                      onMouseMove={(e) => handleMouseMove(event, e)}
-                    >
-                      <div className="event-date">
-                        <span className="date-text">
-                          {dateFormatted.day}.{dateFormatted.month}.{dateFormatted.year}
-                        </span>
-                      </div>
-                      
-                      <div className="event-location">
-                        <span className="location-text">{event.location}</span>
-                      </div>
-                      
-                      <div className="event-details">
-                        <h2 className="event-title">{event.title}</h2>
-                      </div>
+                    <div className="event-date">
+                      <span className="date-text">
+                        {dateFormatted.day}.{dateFormatted.month}.{dateFormatted.year}
+                      </span>
                     </div>
-                  </Link>
-                )
-              })}
-              
-              {events.length === 0 && !isLoading && (
-                <div className="no-events">
-                  <p>No upcoming events at the moment.</p>
-                </div>
-              )}
+                    
+                    <div className="event-location">
+                      <span className="location-text">{event.location}</span>
+                    </div>
+                    
+                    <div className="event-details">
+                      <h2 className="event-title">{event.title}</h2>
+                    </div>
+                  </div>
+                </Link>
+              )
+            })
+          ) : (
+            <div className="no-events">
+              <p>No upcoming events at the moment.</p>
             </div>
           )}
+            </div>
         </div>
-      </div>
     </>
   )
 }
